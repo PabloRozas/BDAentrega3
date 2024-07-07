@@ -25,9 +25,8 @@ public class RankingEntity {
     @JoinColumn(name = "id_tarea")
     private TareaEntity tarea;
 
-    @ManyToOne
-    @JoinColumn(name = "id_voluntario")
-    private VoluntarioEntity voluntario;
+    @Column(name = "voluntario_id")
+    private String voluntarioId;
 
     // Constructor
     public RankingEntity() {
@@ -90,11 +89,11 @@ public class RankingEntity {
         this.tarea = tarea;
     }
 
-    public VoluntarioEntity getVoluntario() {
-        return this.voluntario;
+    public String getIdVoluntario() {
+        return this.voluntarioId;
     }
 
-    public void setVoluntario(VoluntarioEntity voluntario) {
-        this.voluntario = voluntario;
+    public void setIdVoluntario(String voluntarioId) {
+        this.voluntarioId = voluntarioId;
     }
 }

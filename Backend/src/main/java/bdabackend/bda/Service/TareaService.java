@@ -38,9 +38,10 @@ public class TareaService {
         return tareaRepository.listaTarea();
     }
 
-    public List<TareaEntity> getRankingTarea(String nombreTarea) {
-        return tareaRepository.listRankingTarea(nombreTarea);
-    }
+    // ! REVISAR
+    // public List<TareaEntity> getRankingTarea(String nombreTarea) {
+    // return tareaRepository.listRankingTarea(nombreTarea);
+    // }
 
     public List<TareaEntity> tablaTareas(Long id) {
         return tareaRepository.tablaTareas(id);

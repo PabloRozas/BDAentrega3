@@ -90,10 +90,11 @@ public class TareaController {
         return lista;
     }
 
-    @GetMapping("/nombre/{nombreTarea}")
-    public List<TareaEntity> getRankingTarea(@PathVariable String nombreTarea) {
-        return tareaService.getRankingTarea(nombreTarea);
-    }
+    // ! REVISAR
+    // @GetMapping("/nombre/{nombreTarea}")
+    // public List<TareaEntity> getRankingTarea(@PathVariable String nombreTarea) {
+    // return tareaService.getRankingTarea(nombreTarea);
+    // }
 
     @PostMapping("/add")
     public void addTarea(@RequestBody Map<String, String> body) {

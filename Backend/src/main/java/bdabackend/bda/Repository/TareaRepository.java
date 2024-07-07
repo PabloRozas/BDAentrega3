@@ -45,7 +45,7 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Long> {
 
         @Query("SELECT t.nombre, v.nombre, r.nivel " +
                         "FROM VoluntarioEntity v, TareaEntity t, RankingEntity r " +
-                        "WHERE t.nombre = :nombre AND v.id = r.voluntario.id AND t.id = r.tarea.id "
+                        "WHERE t.nombre = :nombre AND v.id = r.idVoluntario AND t.id = r.tarea.id "
                         +
                         "GROUP BY t.nombre, v.nombre, r.nivel " +
                         "ORDER BY r.nivel DESC")

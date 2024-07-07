@@ -1,7 +1,5 @@
 package bdabackend.bda.Repository;
 
-import bdabackend.bda.Entity.TareaEntity;
-import org.springframework.data.geo.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,7 +24,7 @@ public interface RankingRepository extends JpaRepository<RankingEntity, Long> {
                         @Param("nombre_voluntario") String nombre_voluntario,
                         @Param("numeroDocumentoVoluntario") String numeroDocumentoVoluntario,
                         @Param("idTarea") Long idTarea,
-                        @Param("idVoluntario") Long idVoluntario);
+                        @Param("idVoluntario") String idVoluntario);
 
         // Crear
         // Insertar un nuevo registro en la tabla ranking sin los valores de idTarea y
@@ -64,11 +62,11 @@ public interface RankingRepository extends JpaRepository<RankingEntity, Long> {
         public List<?> sacarZonaEmergencia(@Param("v") Long id);
 
         @Query(value = "SELECT * FROM voluntario WHERE voluntario.id =?1", nativeQuery = true)
-        public List<?> sacarZonaVoluntario(@Param("v") Long id);
+        public List<?> sacarZonaVoluntario(@Param("v") String id);
 
         @Query("SELECT v.habilidadRequerida FROM TareaHabilidadEntity v WHERE v.habilidadRequerida LIKE CONCAT('%', :equipo, '%')")
         public List<String> matchEquipo(@Param("equipo") String equipo);
 
-        @Query("SELECT COUNT(v) FROM VoluntarioHabilidadEntity v WHERE v.voluntario.id=:id")
-        public int matchHabilidad(@Param("id") Long id);
+        @Query("SELECT COUNT(v) FROM VoluntarioHabilidadEntity v WHERE v.idVoluntario=:id")
+        public int matchHabilidad(@Param("id") String id);
 }

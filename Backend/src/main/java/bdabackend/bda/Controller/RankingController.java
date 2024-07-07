@@ -44,8 +44,8 @@ public class RankingController {
     }
 
     @PostMapping("/add")
-    public void crearRanking(@RequestBody Map<String, String> body){
-        Long idVoluntario = Long.parseLong(body.get("idVoluntario"));
+    public void crearRanking(@RequestBody Map<String, String> body) {
+        String idVoluntario = body.get("idVoluntario");
         Long idEmergencia = Long.parseLong(body.get("idEmergencia"));
         List<?> emergenciaZona = rankingService.emergenciaZona(idEmergencia);
         Object[] emergencia = (Object[]) emergenciaZona.get(0);
@@ -61,7 +61,8 @@ public class RankingController {
         double[] latLong1 = rankingService.wkbToLatLong(rankingService.hexStringToByteArray(text1));
         double latitudVoluntario = latLong1[1];
         double longitudVoluntario = latLong1[0];
-        double distancia = rankingService.distanciaEntrePuntos(latitudVoluntario, longitudVoluntario, latitudEmergencia, longitudEmergencia);
+        double distancia = rankingService.distanciaEntrePuntos(latitudVoluntario, longitudVoluntario, latitudEmergencia,
+                longitudEmergencia);
         List<?> tareas = tareaService.tareaEmerg(idEmergencia);
         for (Object tarea : tareas) {
             Object[] tarea1 = (Object[]) tarea;
@@ -70,9 +71,10 @@ public class RankingController {
             int nivelRanking = rankingService.puntajeRanking(distancia, idVoluntario);
             String nombreVoluntario = voluntarioService.nombrev(idVoluntario);
             String numeroDocumentoVoluntario = voluntarioService.numerov(idVoluntario);
-            //RankingEntity ranking = new RankingEntity(nivelRanking, tareaRanking, nombreVoluntario,
-            //        numeroDocumentoVoluntario);
-            //Long idUsuario = 1L;
+            // RankingEntity ranking = new RankingEntity(nivelRanking, tareaRanking,
+            // nombreVoluntario,
+            // numeroDocumentoVoluntario);
+            // Long idUsuario = 1L;
             // auditoriaService.registrarCambio(idUsuario, "Add", "añadio un ranking");
             rankingService.insertarRanking(nivelRanking, tareaRanking, nombreVoluntario,
                     numeroDocumentoVoluntario, idTarea,
@@ -84,8 +86,8 @@ public class RankingController {
 
     @DeleteMapping("/delete/{idRanking}")
     public void eliminar(@PathVariable Long idRanking) {
-        //RankingEntity rankingEntity = rankingService.buscarRankingPorId(idRanking);
-        //Long idUsuario = 1L;// metodo para obtener id de usuario ya listo, esperar a
+        // RankingEntity rankingEntity = rankingService.buscarRankingPorId(idRanking);
+        // Long idUsuario = 1L;// metodo para obtener id de usuario ya listo, esperar a
         // pablo
         // auditoriaService.registrarCambio(idUsuario, "Delete", "elimino un ranking");
         rankingService.eliminarRankingPorId(idRanking);
