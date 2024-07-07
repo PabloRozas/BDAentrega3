@@ -69,9 +69,9 @@ public class VoluntarioService {
         String zonaViviendaWKT = String.format("POINT(%s %s)", df.format(longitud), df.format(latitud));
 
         // Ejecuta la consulta SQL parametrizada para insertar el nuevo voluntario
-        jdbcTemplate.update("INSERT INTO voluntario (nombre, correo, "
+        jdbcTemplate.update("INSERT INTO voluntario (id_usuario, nombre, correo, "
                 + "numero_documento, zona_vivienda, contrasena, "
-                + "equipamiento) VALUES (?, ?, ?, ST_GeomFromText(?), ?, ?)", nombreVoluntario,
+                + "equipamiento) VALUES (?,?, ?, ?, ST_GeomFromText(?), ?, ?)", nombreVoluntario,
                 correoVoluntario, numeroDocumentoVoluntario, zonaViviendaWKT, contrasenaVoluntario,
                 equipamientoVoluntario);
     }
