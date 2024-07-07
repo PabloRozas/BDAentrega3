@@ -51,9 +51,10 @@ public class CoordinadorController {
 
     @DeleteMapping("/delete/{id}")
     public void eliminar(@PathVariable Long id) {
-        //Long idUsuario = 2L;//metodo para obtener id de usuario ya listo, esperar a
+        // Long idUsuario = 2L;//metodo para obtener id de usuario ya listo, esperar a
         // pablo
-        //auditoriaService.registrarCambio(idUsuario, "Delete", "elimino unvoluntario");
+        // auditoriaService.registrarCambio(idUsuario, "Delete", "elimino
+        // unvoluntario");
         coordinadorService.eliminarCoordinadorPorId(id);
     }
 }

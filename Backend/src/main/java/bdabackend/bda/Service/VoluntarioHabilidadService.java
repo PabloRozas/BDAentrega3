@@ -13,8 +13,8 @@ public class VoluntarioHabilidadService {
     @Autowired
     private VoluntarioHabilidadRepository voluntarioHabilidadRepository;
 
-    public void insertarVoluntarioHabilidad(Long id_habilidad, Long id_voluntario) {
-        voluntarioHabilidadRepository.insertarVoluntarioHabilidad(id_habilidad, id_voluntario);
+    public void insertarVoluntarioHabilidad(Long id_habilidad, String id_voluntario) {
+        voluntarioHabilidadRepository.insertarVoluntarioHabilidad(id_voluntario, id_habilidad);
     }
 
     public void eliminarVoluntarioHabilidadPorId(Long id) {

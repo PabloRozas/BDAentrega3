@@ -12,17 +12,15 @@ public class EstadoTareaEntity {
     @Column(name = "estado")
     private Boolean estado;
     @Column(name = "id_tarea")
-    private String tareaId;
+    private String idTarea;
 
     // Constructores
     public EstadoTareaEntity() {
     }
 
-    public EstadoTareaEntity(Boolean estado
-            , String tarea
-    ) {
+    public EstadoTareaEntity(Boolean estado, String tarea) {
         this.estado = estado;
-        this.tareaId = tarea;
+        this.idTarea = tarea;
     }
 
     // Getters y Setters
@@ -35,7 +33,7 @@ public class EstadoTareaEntity {
     }
 
     public String getTarea() {
-        return tareaId;
+        return idTarea;
     }
 
     public void setId(Long id) {
@@ -47,8 +45,7 @@ public class EstadoTareaEntity {
     }
 
     public void setTarea(String tarea) {
-        this.tareaId = tarea;
+        this.idTarea = tarea;
     }
-
 
 }

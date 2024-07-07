@@ -9,9 +9,8 @@ public class VoluntarioHabilidadEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_voluntario")
-    private VoluntarioEntity voluntario;
+    @Column(name = "id_voluntario")
+    private String idVoluntario;
 
     @ManyToOne
     @JoinColumn(name = "id_habilidad")
@@ -21,8 +20,8 @@ public class VoluntarioHabilidadEntity {
     public VoluntarioHabilidadEntity() {
     }
 
-    public VoluntarioHabilidadEntity(VoluntarioEntity voluntario, HabilidadEntity habilidad) {
-        this.voluntario = voluntario;
+    public VoluntarioHabilidadEntity(String idVoluntario, HabilidadEntity habilidad) {
+        this.idVoluntario = idVoluntario;
         this.habilidad = habilidad;
     }
 
@@ -35,12 +34,12 @@ public class VoluntarioHabilidadEntity {
         this.id = id;
     }
 
-    public VoluntarioEntity getVoluntario() {
-        return this.voluntario;
+    public String getVoluntario() {
+        return this.idVoluntario;
     }
 
-    public void setVoluntario(VoluntarioEntity voluntario) {
-        this.voluntario = voluntario;
+    public void setVoluntario(String idVoluntario) {
+        this.idVoluntario = idVoluntario;
     }
 
     public HabilidadEntity getHabilidad() {

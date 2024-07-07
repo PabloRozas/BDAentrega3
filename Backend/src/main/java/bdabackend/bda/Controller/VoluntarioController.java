@@ -13,7 +13,7 @@ import bdabackend.bda.Service.VoluntarioService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import bdabackend.bda.Entity.AuthenticationResponse;
-import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -31,44 +31,46 @@ public class VoluntarioController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/all")
-    public List<?> tabla() {
-        return voluntarioService.listaVoluntario();
-    }
-
-    @GetMapping("/palabra/{palabraClave}")
-    public ResponseEntity<List<VoluntarioEntity>> buscarVoluntarios(@PathVariable String palabraClave) {
-        List<VoluntarioEntity> voluntariosEncontrados = voluntarioService.listaFiltro(palabraClave);
-        if (voluntariosEncontrados.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(voluntariosEncontrados);
-    }
-
-    @GetMapping("/{idVoluntario}")
-    public List<?> buscarId(@PathVariable Long idVoluntario) {
-        return voluntarioService.listaVoluntarioId(idVoluntario);
-    }
-
-    @DeleteMapping("/delete/{idVoluntario}")
-    public void eliminar(@PathVariable Long idVoluntario) {
-        voluntarioService.eliminarVoluntarioPorId(idVoluntario);
-    }
-
-    @PostMapping("/add")
-    public void crearVoluntario(@RequestBody Map<String, String> body) {
-        String nombreVoluntario = body.get("nombreVoluntario");
-        String contrasenaVoluntario = body.get("contrasenaVoluntario");
-        String correoVoluntario = body.get("correoVoluntario");
-        String numeroDocumentoVoluntario = body.get("numeroDocumentoVoluntario");
-        String equipamientoVoluntario = body.get("equipamientoVoluntario");
+    // CREAR
+    /**
+     * Controlador que permite registrar a un voluntario en la base de datos.
+     * 
+     * @param body Un Map con los datos del voluntario a registrar.
+     * @return Un VoluntarioEntity con los datos del voluntario registrado.
+     *         TODO: Cambiar el tipo de retorno a void
+     */
+    @PostMapping("/register")
+    public void register(@RequestBody Map<String, String> body) {
+        // Se reciben los parametros de nombre, contraseña correo y numero de documento
+        String nombre = body.get("nombre");
+        String correo = body.get("correo");
+        String numeroDocumento = body.get("numeroDocumento");
         Double latitud = Double.parseDouble(body.get("latitud"));
         Double longitud = Double.parseDouble(body.get("longitud"));
-        // Llama al servicio para crear un nuevo voluntario
-        voluntarioService.crearVoluntario(nombreVoluntario, correoVoluntario, numeroDocumentoVoluntario,
-                latitud, longitud, passwordEncoder.encode(contrasenaVoluntario), equipamientoVoluntario);
+        String contrasena = body.get("contrasena");
+        String equipamiento = body.get("equipamiento");
+
+        // Se crea un VoluntarioEntity con los parametros recibidos
+        VoluntarioEntity voluntario = new VoluntarioEntity(nombre, correo,
+                numeroDocumento, new GeoJsonPoint(longitud, latitud),
+                passwordEncoder.encode(contrasena),
+                equipamiento);
+
+        // Se guarda el voluntario en la base de datos
+        voluntarioService.insertarVoluntario(voluntario);
     }
 
+    // LEER
+
+    /**
+     * Controlador que permite logear a un voluntario según el correo y la
+     * contraseña
+     * proporcionados.
+     * 
+     * @param body Un Map con el correo y la contraseña del voluntario.
+     * @return Un ResponseEntity con un AuthenticationResponse, este contiene el
+     *         token que se debe usar en las demas consultas.
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody Map<String, String> body) {
         // Se recibe el correo y la contraseña
@@ -79,24 +81,42 @@ public class VoluntarioController {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 
-    @PostMapping("/register")
-    public VoluntarioEntity register(@RequestBody Map<String, String> body) {
-        // Se reciben los parametros de nombre, contraseña correo y numero de documento
-        String nombre = body.get("nombre");
-        String correo = body.get("correo");
-        String numeroDocumento = body.get("numeroDocumento");
-        // TODO: Cambiar el tipo de dato de zonaVivienda a Point, agregar la logica
-        Point zonaVivienda = new Point(0, 0); // TODO: se debe cambiar por el parametro de entrada
-        String contrasena = body.get("contrasena");
-        String equipamiento = body.get("equipamiento");
-
-        // Se crea un VoluntarioEntity con los parametros recibidos
-        VoluntarioEntity voluntario = new VoluntarioEntity(nombre, correo, numeroDocumento, zonaVivienda,
-                passwordEncoder.encode(contrasena),
-                equipamiento);
-
-        // Se guarda el voluntario en la base de datos
-        voluntarioService.insertarVoluntario(voluntario);
-        return voluntario;
+    /**
+     * Controlador que retorna una lista de todos los voluntarios.
+     * 
+     * @return Una lista de todos los voluntarios.
+     */
+    @GetMapping("/all")
+    public List<VoluntarioEntity> tabla() {
+        return voluntarioService.listaVoluntario();
     }
+
+    /**
+     * Controlador que retorna un VoluntarioEntity según el correo proporcionado.
+     *
+     * @param correo El correo del voluntario a buscar.
+     * @return Un VoluntarioEntity con el correo proporcionado, o null si no se
+     *         encuentra.
+     */
+    @GetMapping("/correo/{correo}")
+    public VoluntarioEntity findByCorreo(@PathVariable String correo) {
+        return voluntarioService.buscarPorCorreo(correo);
+    }
+
+    // ACTUALIZAR
+    // ! No hay controladores para actualizar
+
+    // BORRAR
+
+    /**
+     * Controlador que elimina un VoluntarioEntity según el id proporcionado.
+     *
+     * @param idVoluntario El id del voluntario a borrar.
+     * @return void
+     */
+    @DeleteMapping("/delete/{idVoluntario}")
+    public void eliminar(@PathVariable String idVoluntario) {
+        voluntarioService.eliminarVoluntarioPorId(idVoluntario);
+    }
+
 }

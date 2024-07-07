@@ -1,90 +1,131 @@
 package bdabackend.bda.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import bdabackend.bda.Entity.VoluntarioEntity;
 import bdabackend.bda.Repository.VoluntarioRepository;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class VoluntarioService {
     @Autowired
     private VoluntarioRepository voluntarioRepository;
 
+    // CREAR
+
+    /**
+     * Inserta un nuevo voluntario en la base de datos.
+     *
+     * @param voluntario Un VoluntarioEntity con los datos del voluntario a
+     *                   insertar.
+     */
     public void insertarVoluntario(VoluntarioEntity voluntario) {
-        voluntarioRepository.insertarVoluntario(voluntario.getNombre(), voluntario.getCorreo(),
-                voluntario.getNumeroDocumento(), voluntario.getZonaVivienda(), voluntario.getContrasena(),
-                voluntario.getEquipamiento());
+        voluntarioRepository.save(voluntario);
     }
 
-    public List<VoluntarioEntity> listaFiltro(String palabraClave) {
-        return voluntarioRepository.findAll(palabraClave);
+    // LEER
+
+    /**
+     * Obtiene una lista con todos los voluntarios registrados en la base de datos.
+     */
+    public List<VoluntarioEntity> listaVoluntario() {
+        return voluntarioRepository.findAll();
     }
 
-    public void eliminarVoluntarioPorId(Long id) {
-        voluntarioRepository.eliminarVoluntarioPorId(id);
+    /**
+     * Busca un voluntario en la base de datos por su id.
+     * 
+     * @param id El id del voluntario a buscar.
+     * @return Un VoluntarioEntity con los datos del voluntario encontrado.
+     */
+    public VoluntarioEntity buscarVoluntarioPorId(String id) {
+        return voluntarioRepository.findById(id).orElse(null);
     }
 
-    public VoluntarioEntity buscarVoluntarioPorId(Long id) {
-        return voluntarioRepository.buscarVoluntarioPorId(id);
-    }
-
+    /**
+     * Busca un voluntario en la base de datos por su correo.
+     * 
+     * @param correo El correo del voluntario a buscar.
+     * @return Un VoluntarioEntity con los datos del voluntario encontrado.
+     */
     public VoluntarioEntity buscarPorCorreo(String correo) {
+        VoluntarioEntity voluntarioData = voluntarioRepository.findByCorreo(correo);
+        return voluntarioData;
+    }
 
-        VoluntarioEntity voluntario = new VoluntarioEntity();
-        List<String> voluntarioData = voluntarioRepository.buscarPorCorreo(correo);
-        // Se hace split "," para obtener los datos de la lista al primer elemento
-        String[] parts = voluntarioData.get(0).split(",");
-        if (parts.length > 0) {
-            voluntario.setNombre(parts[0]);
-            voluntario.setCorreo(parts[1]);
-            voluntario.setEquipamiento(parts[2]);
-            voluntario.setNumeroDocumento(parts[3]);
-            voluntario.setContrasena(parts[4]);
+    /**
+     * Busca un voluntario en la base de datos por su id y devuelve su nombre.
+     * 
+     * @param id El id del voluntario a buscar.
+     * @return El nombre del voluntario encontrado.
+     */
+    public String nombrev(String id) {
+        return voluntarioRepository.findById(id).get().getNombre();
+    }
+
+    /**
+     * Busca un voluntario en la base de datos por su id y devuelve numero de
+     * documento.
+     * 
+     * @param id El id del voluntario a buscar.
+     * @return El numero de documento del voluntario encontrado.
+     */
+    public String numerov(String id) {
+        return voluntarioRepository.findById(id).get().getNumeroDocumento();
+    }
+
+    /**
+     * Busca un voluntario en la base de datos por su id y devuelve el equipamiento.
+     * 
+     * @param id El id del voluntario a buscar.
+     * @return El equipamiento del voluntario encontrado.
+     */
+    public String eqipamientov(String id) {
+        return voluntarioRepository.findById(id).get().getEquipamiento();
+    }
+
+    // ACTUALIZAR
+
+    // ELIMINAR
+
+    /**
+     * Elimina a un voluntario de la base de datos según su id, solo en caso de
+     * encontrarlo.
+     * 
+     * @param id
+     */
+    public void eliminarVoluntarioPorId(String id) {
+        if (voluntarioRepository.existsById(id)) {
+            voluntarioRepository.deleteById(id);
+        } else {
+            System.out.println("No se encontró el voluntario con el id: " + id);
         }
-        return voluntario;
     }
 
-    public List<?> listaVoluntario() {
-        return voluntarioRepository.listaVoluntario();
-    }
+    // ! REVISAR
+    // @Autowired
+    // private JdbcTemplate jdbcTemplate;
 
-    public List<?> listaVoluntarioId(Long id) {
-        return voluntarioRepository.listaVoluntarioId(id);
-    }
+    // public void crearVoluntario(String nombreVoluntario, String correoVoluntario,
+    // String numeroDocumentoVoluntario,
+    // Double latitud, Double longitud, String contrasenaVoluntario, String
+    // equipamientoVoluntario) {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    // // Convierte las coordenadas a un formato adecuado para PostgreSQL, como WKT
+    // DecimalFormat df = new DecimalFormat("#.######", new
+    // DecimalFormatSymbols(Locale.US));
+    // String zonaViviendaWKT = String.format("POINT(%s %s)", df.format(longitud),
+    // df.format(latitud));
 
-    public void crearVoluntario(String nombreVoluntario, String correoVoluntario, String numeroDocumentoVoluntario,
-            Double latitud, Double longitud, String contrasenaVoluntario, String equipamientoVoluntario) {
+    // // Ejecuta la consulta SQL parametrizada para insertar el nuevo voluntario
+    // jdbcTemplate.update("INSERT INTO voluntario (nombre, correo, "
+    // + "numero_documento, zona_vivienda, contrasena, "
+    // + "equipamiento) VALUES (?, ?, ?, ST_GeomFromText(?), ?, ?)",
+    // nombreVoluntario,
+    // correoVoluntario, numeroDocumentoVoluntario, zonaViviendaWKT,
+    // contrasenaVoluntario,
+    // equipamientoVoluntario);
+    // }
 
-        // Convierte las coordenadas a un formato adecuado para PostgreSQL, como WKT
-        DecimalFormat df = new DecimalFormat("#.######", new DecimalFormatSymbols(Locale.US));
-        String zonaViviendaWKT = String.format("POINT(%s %s)", df.format(longitud), df.format(latitud));
-
-        // Ejecuta la consulta SQL parametrizada para insertar el nuevo voluntario
-        jdbcTemplate.update("INSERT INTO voluntario (nombre, correo, "
-                + "numero_documento, zona_vivienda, contrasena, "
-                + "equipamiento) VALUES (?, ?, ?, ST_GeomFromText(?), ?, ?)", nombreVoluntario,
-                correoVoluntario, numeroDocumentoVoluntario, zonaViviendaWKT, contrasenaVoluntario,
-                equipamientoVoluntario);
-    }
-
-    public String nombrev(Long id) {
-        return voluntarioRepository.nombre(id);
-    }
-
-    public String numerov(Long id) {
-        return voluntarioRepository.numeroDocumento(id);
-    }
-
-    public String eqipamientov(Long id) {
-        return voluntarioRepository.equipamiento(id);
-    }
 }

@@ -29,28 +29,32 @@ public class VoluntarioHabilidadController {
 
     @PostMapping("/add")
     public void addVoluntarioHabilidad(@RequestBody Map<String, String> body) {
-        Long idVoluntario = Long.parseLong(body.get("voluntario"));
+        String idVoluntario = body.get("voluntario");
         Long idHabilidad = Long.parseLong(body.get("habilidad"));
-        //HabilidadEntity habilidadNew = habilidadService.buscarHabilidadPorId(idVoluntario);
-        //VoluntarioEntity voluntarioNew = voluntarioService.buscarVoluntarioPorId(idHabilidad);
-        //VoluntarioHabilidadEntity voluntarioHabilidad = new VoluntarioHabilidadEntity(voluntarioNew, habilidadNew);
-        //Long idUsuario = 2L;
-        //auditoriaService.registrarCambio(idUsuario, "Add", "añadio una voluntario Habilidad");
-        voluntarioHabilidadService.insertarVoluntarioHabilidad(idHabilidad,idVoluntario);
+        // HabilidadEntity habilidadNew =
+        // habilidadService.buscarHabilidadPorId(idVoluntario);
+        // VoluntarioEntity voluntarioNew =
+        // voluntarioService.buscarVoluntarioPorId(idHabilidad);
+        // VoluntarioHabilidadEntity voluntarioHabilidad = new
+        // VoluntarioHabilidadEntity(voluntarioNew, habilidadNew);
+        // Long idUsuario = 2L;
+        // auditoriaService.registrarCambio(idUsuario, "Add", "añadio una voluntario
+        // Habilidad");
+        voluntarioHabilidadService.insertarVoluntarioHabilidad(idHabilidad, idVoluntario);
         // Long idUsuario = //metodo para obtener id de usuario ya listo, esperar a
         // pablo
         // auditoriaService.registrarCambio(idUsuario, "Add", "añadio una voluntario
         // Habilidad");
-        //return voluntarioHabilidad;
+        // return voluntarioHabilidad;
     }
 
     @DeleteMapping("/delete/{idVoluntario}")
     public void eliminar(@PathVariable Long id) {
-        Long idUsuario = 2L;//metodo para obtener id de usuario ya listo, esperar a
+        Long idUsuario = 2L;// metodo para obtener id de usuario ya listo, esperar a
         // pablo
-        //auditoriaService.registrarCambio(idUsuario, "Delete", "elimino unvoluntario");
+        // auditoriaService.registrarCambio(idUsuario, "Delete", "elimino
+        // unvoluntario");
         voluntarioHabilidadService.eliminarVoluntarioHabilidadPorId(id);
-
 
     }
 }
