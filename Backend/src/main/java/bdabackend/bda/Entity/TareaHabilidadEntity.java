@@ -11,10 +11,13 @@ public class TareaHabilidadEntity {
 
     @Column(name = "hablididad_requerida")
     private String habilidadRequerida;
-
+/*
     @ManyToOne
     @JoinColumn(name = "id_tarea")
-    private TareaEntity tarea;
+    private MongoTareaEntity tarea;
+*/
+    @Column(name = "id_tarea")
+    private String tareaId;
 
     @ManyToOne
     @JoinColumn(name = "id_emergencia_habilidad")
@@ -24,8 +27,9 @@ public class TareaHabilidadEntity {
     public TareaHabilidadEntity() {
     }
 
-    public TareaHabilidadEntity(String habilidadRequerida) {
+    public TareaHabilidadEntity(String habilidadRequerida, String tarea) {
         this.habilidadRequerida = habilidadRequerida;
+        this.tareaId = tarea;
     }
 
     // Getters and Setters
@@ -45,13 +49,13 @@ public class TareaHabilidadEntity {
         this.habilidadRequerida = habilidadRequerida;
     }
 
-    public TareaEntity getTarea() {
-        return this.tarea;
-    }
+        public String getTarea() {
+            return this.tareaId;
+        }
 
-    public void setTarea(TareaEntity tarea) {
-        this.tarea = tarea;
-    }
+        public void setTarea(String tarea) {
+            this.tareaId = tarea;
+        }
 
     public EmergenciaHabilidadEntity getEmergenciaHabilidad() {
         return this.emergenciaHabilidad;

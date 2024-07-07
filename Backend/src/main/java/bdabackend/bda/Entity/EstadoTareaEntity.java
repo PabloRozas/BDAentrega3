@@ -11,18 +11,18 @@ public class EstadoTareaEntity {
 
     @Column(name = "estado")
     private Boolean estado;
-
-    @ManyToOne
-    @JoinColumn(name = "id_tarea")
-    private TareaEntity tarea;
+    @Column(name = "id_tarea")
+    private String tareaId;
 
     // Constructores
     public EstadoTareaEntity() {
     }
 
-    public EstadoTareaEntity(Boolean estado, TareaEntity tarea) {
+    public EstadoTareaEntity(Boolean estado
+            , String tarea
+    ) {
         this.estado = estado;
-        this.tarea = tarea;
+        this.tareaId = tarea;
     }
 
     // Getters y Setters
@@ -34,8 +34,8 @@ public class EstadoTareaEntity {
         return estado;
     }
 
-    public TareaEntity getTarea() {
-        return tarea;
+    public String getTarea() {
+        return tareaId;
     }
 
     public void setId(Long id) {
@@ -46,7 +46,9 @@ public class EstadoTareaEntity {
         this.estado = estado;
     }
 
-    public void setTarea(TareaEntity tarea) {
-        this.tarea = tarea;
+    public void setTarea(String tarea) {
+        this.tareaId = tarea;
     }
+
+
 }

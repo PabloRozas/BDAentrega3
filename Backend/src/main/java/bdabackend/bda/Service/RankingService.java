@@ -18,7 +18,7 @@ public class RankingService {
     private VoluntarioService voluntarioService;
 
     public void insertarRanking(int nivel, String tareaRanking, String nombreVoluntario,
-            String numeroDocumentoVoluntario, Long idTarea, String idVoluntario) {
+            String numeroDocumentoVoluntario, String idTarea, Long idVoluntario) {
         rankingRepository.insertarRanking(nivel, tareaRanking, nombreVoluntario, numeroDocumentoVoluntario, idTarea,
                 idVoluntario);
     }
@@ -49,7 +49,7 @@ public class RankingService {
         return rankingRepository.sacarZonaEmergencia(id);
     }
 
-    public List<?> voluntarioZona(String id) {
+    public List<?> voluntarioZona(Long id) {
         return rankingRepository.sacarZonaVoluntario(id);
     }
 
@@ -107,7 +107,7 @@ public class RankingService {
         return data;
     }
 
-    public int puntajeRanking(Double distancia, String idVoluntario) {
+    public int puntajeRanking(Double distancia, Long idVoluntario) {
         int contador = 0;
         String equipo = voluntarioService.eqipamientov(idVoluntario);
         String[] elementos = equipo.split("\s,\s");

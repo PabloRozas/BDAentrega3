@@ -31,10 +31,10 @@ public class EmergenciaEntity {
 
     @OneToMany(mappedBy = "emergencia")
     private Set<EmergenciaHabilidadEntity> emergenciaHabilidad = new HashSet<>();
-
+/*
     @OneToMany(mappedBy = "emergencia")
-    private Set<TareaEntity> tarea = new HashSet<>();
-
+    private Set<MongoTareaEntity> tarea = new HashSet<>();
+*/
     @ManyToOne
     @JoinColumn(name = "id_institucion")
     private InstitucionEntity institucion;
@@ -81,11 +81,11 @@ public class EmergenciaEntity {
     public Set<EmergenciaHabilidadEntity> getEmergenciaHabilidad() {
         return emergenciaHabilidad;
     }
-
+/*
     public Set<TareaEntity> getTarea() {
         return tarea;
     }
-
+*/
     public InstitucionEntity getInstitucion() {
         return institucion;
     }
@@ -117,11 +117,11 @@ public class EmergenciaEntity {
     public void setEmergenciaHabilidad(Set<EmergenciaHabilidadEntity> emergenciaHabilidad) {
         this.emergenciaHabilidad = emergenciaHabilidad;
     }
-
+/*
     public void setTarea(Set<TareaEntity> tarea) {
         this.tarea = tarea;
     }
-
+*/
     public void setInstitucion(InstitucionEntity institucion) {
         this.institucion = institucion;
     }
@@ -133,7 +133,7 @@ public class EmergenciaEntity {
     public void removeEmergenciaHabilidad(EmergenciaHabilidadEntity emergenciaHabilidad) {
         this.emergenciaHabilidad.remove(emergenciaHabilidad);
     }
-
+/*
     public void addTarea(TareaEntity tarea) {
         this.tarea.add(tarea);
     }
@@ -141,5 +141,5 @@ public class EmergenciaEntity {
     public void removeTarea(TareaEntity tarea) {
         this.tarea.remove(tarea);
     }
-
+*/
 }

@@ -51,7 +51,7 @@
   <FooterComponent></FooterComponent>
 </template>
 
-<script scoped>
+<script>
 import axios from "axios";
 
 import SideMenu from '@/components/SideMenu.vue';

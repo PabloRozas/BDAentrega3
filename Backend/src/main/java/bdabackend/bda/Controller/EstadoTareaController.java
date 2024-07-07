@@ -35,7 +35,7 @@ public class EstadoTareaController {
 
     @PostMapping("/add")
     public void addEstadoTarea(@RequestBody Map<String, String> body) {
-        Long idTarea = Long.parseLong(body.get("tarea"));
+        String idTarea = body.get("tarea");
         Boolean estadoTarea = Boolean.parseBoolean(body.get("estadoTarea"));
         //TareaEntity tareaNew = tareaService.buscarTareaPorId(idTarea);
         //EstadoTareaEntity estadoTareaNew = new EstadoTareaEntity(estadoTarea, tareaNew);

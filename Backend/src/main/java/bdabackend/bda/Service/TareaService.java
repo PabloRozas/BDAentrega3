@@ -1,81 +1,53 @@
 package bdabackend.bda.Service;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.List;
-import java.util.Locale;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Point;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
 
 import bdabackend.bda.Entity.TareaEntity;
 import bdabackend.bda.Repository.TareaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Point;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TareaService {
-    @Autowired
-    private TareaRepository tareaRepository;
-
-    public void insertarTarea(String nombre, String descripcion, String tipo, Point zona, Long idEmergencia) {
-        tareaRepository.insertarTarea(nombre, descripcion, tipo, zona, idEmergencia);
-    }
-
-    public void insertarTareaSinEmergencia(String nombre, String descripcion, String tipo, Point zona) {
-        tareaRepository.insertarTareaSinEmergencia(nombre, descripcion, tipo, zona);
-    }
-
-    public void eliminarTareaPorId(Long id) {
-        tareaRepository.eliminarTareaPorId(id);
-    }
-
-    public List<?> buscarTareaPorId(Long id) {
-        return tareaRepository.buscarTareaPorId(id);
-    }
-
-    public List<?> listaTarea() {
-        return tareaRepository.listaTarea();
-    }
-
-    // ! REVISAR
-    // public List<TareaEntity> getRankingTarea(String nombreTarea) {
-    // return tareaRepository.listRankingTarea(nombreTarea);
-    // }
-
-    public List<TareaEntity> tablaTareas(Long id) {
-        return tareaRepository.tablaTareas(id);
-    }
-
-    public List<TareaEntity> listaFiltro(String palabraClave) {
-        return tareaRepository.findAll(palabraClave);
-    }
+    private static final Logger logger = LoggerFactory.getLogger(TareaService.class);
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private TareaRepository mongoTareaRepository;
 
-    public void crearTarea(String nombre, String descripcion, String tipo,
-            Double latitud, Double longitud, Long idEmergencia) {
-
-        // Convierte las coordenadas a un formato adecuado para PostgreSQL, como WKT
-        DecimalFormat df = new DecimalFormat("#.######", new DecimalFormatSymbols(Locale.US));
-        String zonaViviendaWKT = String.format("POINT(%s %s)", df.format(longitud), df.format(latitud));
-
-        // Ejecuta la consulta SQL parametrizada para insertar el nuevo voluntario
-        jdbcTemplate.update("INSERT INTO tarea (nombre, descripcion, "
-                + "tipo, zona, id_emergencia) VALUES (?, ?, ?, ST_GeomFromText(?), ?)", nombre,
-                descripcion, tipo, zonaViviendaWKT, idEmergencia);
+    // Guardar una nueva tarea o actualizar una existente
+    public TareaEntity insertarTarea(String nombreTarea, String descripcionTarea, String tipoTarea, Point zona, Long emergencia) {
+        TareaEntity tarea = new TareaEntity(nombreTarea, descripcionTarea, tipoTarea, zona, emergencia);
+        logger.info("Guardando tarea: {}", tarea);
+        return mongoTareaRepository.save(tarea);
     }
 
-    public List<?> tareaEmerg(Long id) {
-        return tareaRepository.tareasPorEmergencia(id);
+    public TareaEntity buscarTareaPorId(String id) {
+        logger.info("Buscando tarea con id: {}", id);
+        Optional<TareaEntity> tarea = mongoTareaRepository.findById(id);
+        return tarea.orElse(null);
     }
 
-    public String nombre(Long id) {
-        return tareaRepository.nombre(id);
+    public List<TareaEntity> listaTarea() {
+        logger.info("Listando todas las tareas");
+        return mongoTareaRepository.findAll();
     }
 
-    public List<?> tareasPorRegion(String nombreRegion) {
-        return tareaRepository.obtenerTareasPorRegion(nombreRegion);
+    public void eliminarTareaPorId(String id) {
+        logger.info("Eliminando tarea con id: {}", id);
+        mongoTareaRepository.deleteById(id);
+    }
+
+    public String nombre(String id) {
+        TareaEntity tarea = mongoTareaRepository.findNombreById(id);
+        return tarea != null ? tarea.getNombre() : null;
+    }
+
+    public List<TareaEntity> tareaEmerg(Long emergenciaId) {
+        return mongoTareaRepository.findByEmergenciaId(emergenciaId);
     }
 }

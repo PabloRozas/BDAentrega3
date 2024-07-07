@@ -15,7 +15,6 @@
         </section>
 
         <main>
-            <img src="../images/mundo.svg" alt="mundo" class="imgFondo">
             <section class="section1">
                 <div id="map" style="height: 100%; width: 100%;"></div>
             </section>
@@ -68,7 +67,6 @@ export default {
                 this.map = map;
 
                 axios.get('http://localhost:8080/regiones/all',
-                    // TODO: cambiar el token por el que se obtenga en el login que debe estar guardado en el local storage
                     { headers: { 'Authorization': `Bearer eyJhbGciOiJIUzI1NiJ9.eyJudW1lcm9Eb2N1bWVudG9Wb2x1bnRhcmlvIjoiMjA4NDczODctNSIsIm5vbWJyZVZvbHVudGFyaW8iOiJQYWJsbyIsInN1YiI6InBhYmxvQGdtYWlsLmNvbSIsImlhdCI6MTcxNjgzMjY1MCwiZXhwIjoxNzE3MjY0NjUwfQ.eDYFXSKcqxxFFD481vS3yGB0rWl3aqbLXOsiWM4wWHY` } })
                     .then(response => {
                         response.data.forEach(region => {
@@ -121,7 +119,6 @@ export default {
         },
         showPolygonInfo(id, name) {
             axios.get(`http://localhost:8080/tarea/tareaRegion/${name}`,
-                // TODO: cambiar el token por el que se obtenga en el login que debe estar guardado en el local storage
                 { headers: { 'Authorization': `Bearer eyJhbGciOiJIUzI1NiJ9.eyJudW1lcm9Eb2N1bWVudG9Wb2x1bnRhcmlvIjoiMjA4NDczODctNSIsIm5vbWJyZVZvbHVudGFyaW8iOiJQYWJsbyIsInN1YiI6InBhYmxvQGdtYWlsLmNvbSIsImlhdCI6MTcxNjgzMjY1MCwiZXhwIjoxNzE3MjY0NjUwfQ.eDYFXSKcqxxFFD481vS3yGB0rWl3aqbLXOsiWM4wWHY` } })
                 .then(response => {
                     this.clearMarkers();
@@ -178,23 +175,13 @@ body {
     padding: 0;
 }
 
-.imgFondo {
-    top: 0;
-    width: 100%;
-    left: 0;
-    height: 100vh;
-    position: absolute;
-    z-index: -10;
-    filter: brightness(0.2) invert(1);
-    object-fit: cover;
-}
-
 .container-admin {
     position: absolute;
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100vh;
+    background-color: white !important;
     color: white;
 
 }

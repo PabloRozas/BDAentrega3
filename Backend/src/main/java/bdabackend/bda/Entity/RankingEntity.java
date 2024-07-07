@@ -20,23 +20,28 @@ public class RankingEntity {
 
     @Column(name = "numero_docuemto_voluntario")
     private String numeroDocumentoVoluntario;
-
+/*
     @ManyToOne
     @JoinColumn(name = "id_tarea")
     private TareaEntity tarea;
+*/
+    @Column(name = "id_tarea")
+    private String tareaId;
 
-    @Column(name = "voluntario_id")
-    private String voluntarioId;
+    @ManyToOne
+    @JoinColumn(name = "id_voluntario")
+    private VoluntarioEntity voluntario;
 
     // Constructor
     public RankingEntity() {
     }
 
-    public RankingEntity(int nivel, String tareaRanking, String nombreVoluntario, String numeroDocumentoVoluntario) {
+    public RankingEntity(int nivel, String tareaRanking, String nombreVoluntario, String numeroDocumentoVoluntario, String tara) {
         this.nivel = nivel;
         this.tareaRanking = tareaRanking;
         this.nombreVoluntario = nombreVoluntario;
         this.numeroDocumentoVoluntario = numeroDocumentoVoluntario;
+        this.tareaId = tara;
     }
 
     // Getters and Setters
@@ -81,19 +86,19 @@ public class RankingEntity {
         this.numeroDocumentoVoluntario = numeroDocumentoVoluntario;
     }
 
-    public TareaEntity getTarea() {
-        return this.tarea;
+    public String getTarea() {
+        return this.tareaId;
     }
 
-    public void setTarea(TareaEntity tarea) {
-        this.tarea = tarea;
+    public void setTarea(String tarea) {
+        this.tareaId = tarea;
     }
 
-    public String getIdVoluntario() {
-        return this.voluntarioId;
+    public VoluntarioEntity getVoluntario() {
+        return this.voluntario;
     }
 
-    public void setIdVoluntario(String voluntarioId) {
-        this.voluntarioId = voluntarioId;
+    public void setVoluntario(VoluntarioEntity voluntario) {
+        this.voluntario = voluntario;
     }
 }

@@ -1,42 +1,47 @@
 package bdabackend.bda.Entity;
 
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
+import org.springframework.data.geo.Point;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Document(collection = "voluntario")
+@Entity
+@Table(name = "voluntario")
 public class VoluntarioEntity {
-    // Atributos
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(name = "nombre")
     private String nombre;
 
+    @Column(name = "correo")
     private String correo;
 
+    @Column(name = "numero_documento")
     private String numeroDocumento;
 
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-    private GeoJsonPoint zonaVivienda;
+    @Column(name = "zona_vivienda", columnDefinition = "geometry(Point,4326)")
+    private Point zonaVivienda;
 
+    @Column(name = "contrasena")
     private String contrasena;
 
+    @Column(name = "equipamiento")
     private String equipamiento;
 
+    @OneToMany(mappedBy = "voluntario")
     private Set<RankingEntity> ranking = new HashSet<>();
 
+    @OneToMany(mappedBy = "voluntario")
     private Set<VoluntarioHabilidadEntity> voluntarioHabilidad = new HashSet<>();
 
-    // Constructores
+    // Constructor
     public VoluntarioEntity() {
     }
 
-    public VoluntarioEntity(String nombre, String correo, String numeroDocumento, GeoJsonPoint zonaVivienda,
+    public VoluntarioEntity(String nombre, String correo, String numeroDocumento, Point zonaVivienda,
             String contrasena, String equipamiento) {
         this.nombre = nombre;
         this.correo = correo;
@@ -47,11 +52,11 @@ public class VoluntarioEntity {
     }
 
     // Getters and Setters
-    public String getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -79,11 +84,11 @@ public class VoluntarioEntity {
         this.numeroDocumento = numeroDocumento;
     }
 
-    public GeoJsonPoint getZonaVivienda() {
+    public Point getZonaVivienda() {
         return this.zonaVivienda;
     }
 
-    public void setZonaVivienda(GeoJsonPoint zonaVivienda) {
+    public void setZonaVivienda(Point zonaVivienda) {
         this.zonaVivienda = zonaVivienda;
     }
 

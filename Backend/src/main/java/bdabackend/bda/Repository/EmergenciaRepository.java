@@ -1,6 +1,5 @@
 package bdabackend.bda.Repository;
 
-import bdabackend.bda.Entity.TareaEntity;
 import org.springframework.data.geo.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

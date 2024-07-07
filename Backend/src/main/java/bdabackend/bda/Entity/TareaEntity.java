@@ -1,65 +1,69 @@
 package bdabackend.bda.Entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Id;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.HashSet;
-import java.util.Set;
+@Document(collection = "Tarea")
 
-@Entity
-@Table(name = "tarea")
 public class TareaEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "nombre")
+    @Field("nombre")
     private String nombre;
 
-    @Column(name = "descripcion")
+    @Field("descripcion")
     private String descripcion;
 
-    @Column(name = "tipo")
+    @Field("tipo")
     private String tipo;
 
-    @Column(name = "zona", columnDefinition = "geometry(Point,4326)")
+    @Field("zona")
     private Point zona;
-
-    @OneToMany(mappedBy = "tarea")
+    /*
+    @DBRef
     private Set<RankingEntity> ranking = new HashSet<>();
 
-    @OneToMany(mappedBy = "tarea")
+    @DBRef
     private Set<TareaHabilidadEntity> tareaHabilidad = new HashSet<>();
 
-    @OneToMany(mappedBy = "tarea")
+    @DBRef
     private Set<EstadoTareaEntity> estadoTarea = new HashSet<>();
+    */
 
-    @ManyToOne
-    @JoinColumn(name = "id_emergencia")
-    private EmergenciaEntity emergencia;
+
+
+    @Field("emergencia")
+    private Long emergencia;
+
+
 
     // Constructor
     public TareaEntity() {
     }
 
-    public TareaEntity(String nombre, String descripcion, String tipo, Point zona) {
+    public TareaEntity(String nombre, String descripcion, String tipo, Point zona, Long emergencia) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.zona = zona;
+        this.emergencia = emergencia;
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return this.id;
+    // Getters y Setters
+
+    public String getId() {
+        return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     public String getNombre() {
-        return this.nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
@@ -67,39 +71,21 @@ public class TareaEntity {
     }
 
     public String getDescripcion() {
-        return this.descripcion;
+        return descripcion;
     }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getTipo() {
-        return this.tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public Point getZona() {
-        return this.zona;
-    }
-
-    public void setZona(Point zona) {
-        this.zona = zona;
-    }
+       /*
 
     public Set<RankingEntity> getRanking() {
-        return this.ranking;
+        return ranking;
     }
 
     public void setRanking(Set<RankingEntity> ranking) {
         this.ranking = ranking;
     }
 
+
     public Set<TareaHabilidadEntity> getTareaHabilidad() {
-        return this.tareaHabilidad;
+        return tareaHabilidad;
     }
 
     public void setTareaHabilidad(Set<TareaHabilidadEntity> tareaHabilidad) {
@@ -107,49 +93,40 @@ public class TareaEntity {
     }
 
     public Set<EstadoTareaEntity> getEstadoTarea() {
-        return this.estadoTarea;
+        return estadoTarea;
     }
 
     public void setEstadoTarea(Set<EstadoTareaEntity> estadoTarea) {
         this.estadoTarea = estadoTarea;
     }
 
-    public EmergenciaEntity getEmergencia() {
-        return this.emergencia;
+     */
+
+    public Long getEmergencia() {
+        return emergencia;
     }
 
-    public void setEmergencia(EmergenciaEntity emergencia) {
+    public void setEmergencia(Long emergencia) {
         this.emergencia = emergencia;
     }
 
-    public void addRanking(RankingEntity rankingEntity) {
-        this.ranking.add(rankingEntity);
-        rankingEntity.setTarea(this);
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public void removeRanking(RankingEntity rankingEntity) {
-        this.ranking.remove(rankingEntity);
-        rankingEntity.setTarea(null);
+    public String getTipo() {
+        return tipo;
     }
 
-    public void addTareaHabilidad(TareaHabilidadEntity tareaHabilidadEntity) {
-        this.tareaHabilidad.add(tareaHabilidadEntity);
-        tareaHabilidadEntity.setTarea(this);
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
-    public void removeTareaHabilidad(TareaHabilidadEntity tareaHabilidadEntity) {
-        this.tareaHabilidad.remove(tareaHabilidadEntity);
-        tareaHabilidadEntity.setTarea(null);
+    public Point getZona() {
+        return zona;
     }
 
-    public void addEstadoTarea(EstadoTareaEntity estadoTareaEntity) {
-        this.estadoTarea.add(estadoTareaEntity);
-        estadoTareaEntity.setTarea(this);
+    public void setZona(Point zona) {
+        this.zona = zona;
     }
-
-    public void removeEstadoTarea(EstadoTareaEntity estadoTareaEntity) {
-        this.estadoTarea.remove(estadoTareaEntity);
-        estadoTareaEntity.setTarea(null);
-    }
-
 }

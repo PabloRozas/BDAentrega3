@@ -1,15 +1,20 @@
 package bdabackend.bda.Controller;
 
+import bdabackend.bda.DTO.TareaDot;
+import bdabackend.bda.Entity.TareaEntity;
 import bdabackend.bda.Entity.RankingEntity;
 import bdabackend.bda.Service.AuditoriaService;
-import bdabackend.bda.Service.RankingService;
 import bdabackend.bda.Service.TareaService;
+import bdabackend.bda.Service.RankingService;
 import bdabackend.bda.Service.VoluntarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/ranking")
@@ -43,9 +48,10 @@ public class RankingController {
         return rankingService.listaRanking();
     }
 
+
     @PostMapping("/add")
-    public void crearRanking(@RequestBody Map<String, String> body) {
-        String idVoluntario = body.get("idVoluntario");
+    public void crearRanking(@RequestBody Map<String, String> body){
+        Long idVoluntario = Long.parseLong(body.get("idVoluntario"));
         Long idEmergencia = Long.parseLong(body.get("idEmergencia"));
         List<?> emergenciaZona = rankingService.emergenciaZona(idEmergencia);
         Object[] emergencia = (Object[]) emergenciaZona.get(0);
@@ -61,20 +67,54 @@ public class RankingController {
         double[] latLong1 = rankingService.wkbToLatLong(rankingService.hexStringToByteArray(text1));
         double latitudVoluntario = latLong1[1];
         double longitudVoluntario = latLong1[0];
-        double distancia = rankingService.distanciaEntrePuntos(latitudVoluntario, longitudVoluntario, latitudEmergencia,
-                longitudEmergencia);
-        List<?> tareas = tareaService.tareaEmerg(idEmergencia);
-        for (Object tarea : tareas) {
-            Object[] tarea1 = (Object[]) tarea;
-            Long idTarea = (Long) tarea1[0];
+        double distancia = rankingService.distanciaEntrePuntos(latitudVoluntario, longitudVoluntario, latitudEmergencia, longitudEmergencia);
+
+
+        List<TareaEntity> tareas = tareaService.listaTarea();// obtener las tareas desde tu base de datos o servicio
+                List<TareaDot> tareasFormateadas = new ArrayList<>();
+
+
+        for (TareaEntity tarea : tareas) {
+            // Formatear los atributos de la tarea
+            String id = tarea.getId();
+            String nombre = tarea.getNombre();
+            String descripcion = tarea.getDescripcion();
+            String tipo = tarea.getTipo();
+            String zona = String.format("Lat: %s, Lon: %s", tarea.getZona().getX(), tarea.getZona().getY());
+
+            String emergencia3 = String.valueOf(tarea.getEmergencia());
+            String emergenciaStr = String.valueOf(idEmergencia);
+
+            if(Objects.equals(emergencia3, emergenciaStr)){
+
+                // Crear el DTO de la tarea formateada
+                TareaDot tareaFormateada = new TareaDot(id, nombre, descripcion, tipo, zona, emergencia3);
+
+                // Añadir a la lista de tareas formateadas
+                tareasFormateadas.add(tareaFormateada);
+            }
+        }
+
+// Ahora tienes una lista de cadenas formateadas que puedes imprimir o manipular
+
+
+
+        for (TareaDot tarea : tareasFormateadas) {
+
+
+
+
+            String idTarea = tarea.getId();
             String tareaRanking = tareaService.nombre(idTarea);
+
+
+
             int nivelRanking = rankingService.puntajeRanking(distancia, idVoluntario);
             String nombreVoluntario = voluntarioService.nombrev(idVoluntario);
             String numeroDocumentoVoluntario = voluntarioService.numerov(idVoluntario);
-            // RankingEntity ranking = new RankingEntity(nivelRanking, tareaRanking,
-            // nombreVoluntario,
-            // numeroDocumentoVoluntario);
-            // Long idUsuario = 1L;
+            //RankingEntity ranking = new RankingEntity(nivelRanking, tareaRanking, nombreVoluntario,
+            //        numeroDocumentoVoluntario);
+            //Long idUsuario = 1L;
             // auditoriaService.registrarCambio(idUsuario, "Add", "añadio un ranking");
             rankingService.insertarRanking(nivelRanking, tareaRanking, nombreVoluntario,
                     numeroDocumentoVoluntario, idTarea,
@@ -84,10 +124,11 @@ public class RankingController {
         }
     }
 
+
     @DeleteMapping("/delete/{idRanking}")
     public void eliminar(@PathVariable Long idRanking) {
-        // RankingEntity rankingEntity = rankingService.buscarRankingPorId(idRanking);
-        // Long idUsuario = 1L;// metodo para obtener id de usuario ya listo, esperar a
+        //RankingEntity rankingEntity = rankingService.buscarRankingPorId(idRanking);
+        //Long idUsuario = 1L;// metodo para obtener id de usuario ya listo, esperar a
         // pablo
         // auditoriaService.registrarCambio(idUsuario, "Delete", "elimino un ranking");
         rankingService.eliminarRankingPorId(idRanking);

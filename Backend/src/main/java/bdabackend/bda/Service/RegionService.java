@@ -1,7 +1,6 @@
 package bdabackend.bda.Service;
 
 import bdabackend.bda.Entity.RegionEntity;
-import bdabackend.bda.Entity.TareaEntity;
 import bdabackend.bda.Repository.RegionRepository;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class RegionService {
