@@ -31,7 +31,6 @@
 export default {
   data() {
     return {
-      appName: "Nombre Fabuloso",
       texto: "¡Únete a la fuerza del voluntariado en emergencias! Nuestra plataforma te conecta con oportunidades para marcar la diferencia cuando más se necesita. Coordinar esfuerzos, asignar tareas y mantener el progreso bajo control: todo en un solo lugar. ¡Haz tu parte y ayuda a construir un mundo más resiliente hoy mismo!"
     };
   },
@@ -190,9 +189,7 @@ body {
 
 .titleRESQ {
   font-size: 6rem;
-  font-weight: 700;
   margin: 0;
-  font-weight: 500;
-  letter-spacing: 1px;
+  font-family: 'Lemon Milk', sans-serif;
 }
 </style>

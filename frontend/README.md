@@ -83,3 +83,5 @@ npm install @nuxt/types
 npm install vue2-google-maps
 
 npm install @googlemaps/js-api-loader
+
+npm install animejs

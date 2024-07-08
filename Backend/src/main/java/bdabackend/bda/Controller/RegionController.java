@@ -37,9 +37,9 @@ public class RegionController {
             Object[] region = (Object[]) regionObj;
 
             Long id = ((Number) region[0]).longValue();
-            String nombreRegiones = (String) region[1];
+            String nombreRegiones = (String) region[2];
 
-            String text = rankingService.bytesToString((byte[]) region[2]);
+            String text = rankingService.bytesToString((byte[]) region[1]);
 
             MultiPolygon multiPolygon = regionService.convertStringToMultiPolygon(text);
 
