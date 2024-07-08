@@ -40,6 +40,8 @@ public class TareaEntity {
 
 
 
+
+
     // Constructor
     public TareaEntity() {
     }

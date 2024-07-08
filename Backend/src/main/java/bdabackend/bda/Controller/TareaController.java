@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/mongoTarea")
+@RequestMapping("/tarea")
 public class TareaController {
     private static final Logger logger = LoggerFactory.getLogger(TareaController.class);
 
@@ -49,6 +49,7 @@ public class TareaController {
             Double latitud = Double.parseDouble(body.get("latitud"));
             Double longitud = Double.parseDouble(body.get("longitud"));
             Point zona = new Point(longitud, latitud);
+
 
             TareaEntity nuevaTarea = mongoTareaService.insertarTarea(nombreTarea, descripcionTarea, tipoTarea, zona, emergencia);
             logger.info("Tarea agregada exitosamente: {}", nuevaTarea);

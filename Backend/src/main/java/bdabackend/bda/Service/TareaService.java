@@ -50,4 +50,7 @@ public class TareaService {
     public List<TareaEntity> tareaEmerg(Long emergenciaId) {
         return mongoTareaRepository.findByEmergenciaId(emergenciaId);
     }
+
+
+
 }
