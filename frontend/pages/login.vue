@@ -98,7 +98,11 @@ export default {
                         localStorage.setItem('token', response.data.token);
                         localStorage.setItem('id', response.data.id);
                         localStorage.setItem('nombre', response.data.nombre);
-                        this.$router.push('/admin');
+                        if (response.data.role === 'COORDINADOR') {
+                            this.$router.push('/admin');
+                        } else if (response.data.role === 'VOLUNTARIO') {
+                            this.$router.push('/voluntario');
+                        }
                     }
                 })
                 .catch((error) => {

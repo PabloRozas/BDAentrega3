@@ -54,11 +54,11 @@
 <script>
 import axios from "axios";
 
-import SideMenu from '@/components/SideMenu.vue';
-import ListCard from '@/components/ListCard.vue';
-import ListCard2 from '@/components/ListCard2.vue';
-import NavbarVoluntario from '@/components/NavbarVoluntario.vue';
-import FooterComponent from '@/components/FooterComponent.vue';
+import SideMenu from '@/components_old/SideMenu.vue';
+import ListCard from '@/components_old/ListCard.vue';
+import ListCard2 from '@/components_old/ListCard2.vue';
+import NavbarVoluntario from '@/components_old/NavbarVoluntario.vue';
+import FooterComponent from '@/components_old/FooterComponent.vue';
 
 export default {
 
