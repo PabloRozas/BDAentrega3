@@ -22,36 +22,20 @@ public class TareaEntity {
 
     @Field("zona")
     private Point zona;
-    /*
-    @DBRef
-    private Set<RankingEntity> ranking = new HashSet<>();
 
-    @DBRef
-    private Set<TareaHabilidadEntity> tareaHabilidad = new HashSet<>();
-
-    @DBRef
-    private Set<EstadoTareaEntity> estadoTarea = new HashSet<>();
-    */
-
-
-
-    @Field("emergencia")
-    private Long emergencia;
-
-
-
-
+    @Field("idEmergencia")
+    private Long idEmergencia;
 
     // Constructor
     public TareaEntity() {
     }
 
-    public TareaEntity(String nombre, String descripcion, String tipo, Point zona, Long emergencia) {
+    public TareaEntity(String nombre, String descripcion, String tipo, Point zona, Long idEmergencia) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.zona = zona;
-        this.emergencia = emergencia;
+        this.idEmergencia = idEmergencia;
     }
 
     // Getters y Setters
@@ -75,41 +59,13 @@ public class TareaEntity {
     public String getDescripcion() {
         return descripcion;
     }
-       /*
-
-    public Set<RankingEntity> getRanking() {
-        return ranking;
-    }
-
-    public void setRanking(Set<RankingEntity> ranking) {
-        this.ranking = ranking;
-    }
-
-
-    public Set<TareaHabilidadEntity> getTareaHabilidad() {
-        return tareaHabilidad;
-    }
-
-    public void setTareaHabilidad(Set<TareaHabilidadEntity> tareaHabilidad) {
-        this.tareaHabilidad = tareaHabilidad;
-    }
-
-    public Set<EstadoTareaEntity> getEstadoTarea() {
-        return estadoTarea;
-    }
-
-    public void setEstadoTarea(Set<EstadoTareaEntity> estadoTarea) {
-        this.estadoTarea = estadoTarea;
-    }
-
-     */
 
     public Long getEmergencia() {
-        return emergencia;
+        return idEmergencia;
     }
 
-    public void setEmergencia(Long emergencia) {
-        this.emergencia = emergencia;
+    public void setEmergencia(Long idEmergencia) {
+        this.idEmergencia = idEmergencia;
     }
 
     public void setDescripcion(String descripcion) {

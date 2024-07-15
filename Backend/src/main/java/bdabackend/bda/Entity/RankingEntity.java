@@ -1,35 +1,23 @@
 package bdabackend.bda.Entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.Id;
 
-@Entity
-@Table(name = "ranking")
+@Document(collection = "ranking")
 public class RankingEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "nivel")
-    private int nivel;
+    private Integer nivel;
 
-    @Column(name = "tarea_ranking")
     private String tareaRanking;
 
-    @Column(name = "nombre_voluntario")
     private String nombreVoluntario;
 
-    @Column(name = "numero_docuemto_voluntario")
     private String numeroDocumentoVoluntario;
-    /*
-     * @ManyToOne
-     * 
-     * @JoinColumn(name = "id_tarea")
-     * private TareaEntity tarea;
-     */
-    @Column(name = "id_tarea")
+
     private String idTarea;
 
-    @Column(name = "id_voluntario")
     private String idVoluntario;
 
     // Constructor
@@ -37,22 +25,18 @@ public class RankingEntity {
     }
 
     public RankingEntity(int nivel, String tareaRanking, String nombreVoluntario, String numeroDocumentoVoluntario,
-            String tarea) {
+            String idTarea, String idVoluntario) {
         this.nivel = nivel;
         this.tareaRanking = tareaRanking;
         this.nombreVoluntario = nombreVoluntario;
         this.numeroDocumentoVoluntario = numeroDocumentoVoluntario;
-        this.idTarea = tarea;
+        this.idTarea = idTarea;
+        this.idVoluntario = idVoluntario;
     }
 
     // Getters and Setters
-
-    public Long getId() {
+    public String getId() {
         return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public int getNivel() {

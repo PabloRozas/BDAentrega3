@@ -30,4 +30,14 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
+    public String getRoleByEmail(String correo) {
+        if (voluntarioService.buscarPorCorreo(correo) != null) {
+            return "VOLUNTARIO";
+        }
+        if (coordinadorService.buscarCoordinadorPorCorreo(correo) != null) {
+            return "COORDINADOR";
+        }
+        return null;
+    }
+
 }

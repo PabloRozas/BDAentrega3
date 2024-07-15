@@ -1,7 +1,5 @@
 package bdabackend.bda.Entity;
 
-import org.hibernate.annotations.Type;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 
 import jakarta.persistence.*;
@@ -19,12 +17,13 @@ public class RegionEntity {
     @Column(name = "geometria")
     public MultiPolygon geometria;
 
-    public RegionEntity(String nombre, MultiPolygon geometria){
+    public RegionEntity(String nombre, MultiPolygon geometria) {
         this.nombre = nombre;
         this.geometria = geometria;
     }
 
-    public  RegionEntity(){}
+    public RegionEntity() {
+    }
     // Getters y Setters
 
     public Long getId() {

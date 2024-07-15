@@ -43,6 +43,8 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST, "/voluntario/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/coordinador/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/coordinador/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/gateway/**").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/gateway/**").permitAll()
                             .anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

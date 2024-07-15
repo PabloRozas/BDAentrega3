@@ -11,12 +11,7 @@ public class TareaHabilidadEntity {
 
     @Column(name = "hablididad_requerida")
     private String habilidadRequerida;
-    /*
-     * @ManyToOne
-     * 
-     * @JoinColumn(name = "id_tarea")
-     * private MongoTareaEntity tarea;
-     */
+
     @Column(name = "id_tarea")
     private String idTarea;
 

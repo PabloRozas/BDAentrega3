@@ -2,10 +2,12 @@ package bdabackend.bda.Entity;
 
 public class AuthenticationResponse {
     private String token;
+    private String role;
 
     // Constructor con un solo parametro
-    public AuthenticationResponse(String token) {
+    public AuthenticationResponse(String token, String role) {
         this.token = token;
+        this.role = role;
     }
 
     // Constructor sin parametros
@@ -21,8 +23,17 @@ public class AuthenticationResponse {
         this.token = token;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public static class Builder {
         private String token;
+        private String role;
 
         public Builder() {
         }
@@ -32,8 +43,13 @@ public class AuthenticationResponse {
             return this;
         }
 
+        public Builder role(String role) {
+            this.role = role;
+            return this;
+        }
+
         public AuthenticationResponse build() {
-            return new AuthenticationResponse(token);
+            return new AuthenticationResponse(token, role);
         }
     }
 

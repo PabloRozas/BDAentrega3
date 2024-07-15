@@ -53,8 +53,4 @@ public class EmergenciaService {
                 zonaViviendaWKT, condicionFisica, cantidadVolMin,
                 cantidadVolMax, institucion);
     }
-
-    public List<EmergenciaEntity> listaFiltro(String palabraClave) {
-        return emergenciaRepository.findAll(palabraClave);
-    }
 }

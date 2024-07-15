@@ -26,6 +26,7 @@ public class AuthService {
         String token = jwtService.generateToken(user.generateExtraClaims(), user);
         return new AuthenticationResponse.Builder()
                 .token(token)
+                .role(userService.getRoleByEmail(request.getCorreo()))
                 .build();
     }
 }

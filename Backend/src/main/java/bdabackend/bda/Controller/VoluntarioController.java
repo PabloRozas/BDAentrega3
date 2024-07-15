@@ -38,7 +38,6 @@ public class VoluntarioController {
      * 
      * @param body Un Map con los datos del voluntario a registrar.
      * @return Un VoluntarioEntity con los datos del voluntario registrado.
-     *         TODO: Cambiar el tipo de retorno a void
      */
     @PostMapping("/register")
     public void register(@RequestBody Map<String, String> body) {
@@ -50,14 +49,13 @@ public class VoluntarioController {
         Double longitud = Double.parseDouble(body.get("longitud"));
         String contrasena = body.get("contrasena");
         String equipamiento = body.get("equipamiento");
-        String idTarea = body.get("idTarea");
-
+        // String idTarea = body.get("idTarea");
 
         // Se crea un VoluntarioEntity con los parametros recibidos
         VoluntarioEntity voluntario = new VoluntarioEntity(nombre, correo,
                 numeroDocumento, new GeoJsonPoint(longitud, latitud),
                 passwordEncoder.encode(contrasena),
-                equipamiento, idTarea);
+                equipamiento);
 
         // Se guarda el voluntario en la base de datos
         voluntarioService.insertarVoluntario(voluntario);
@@ -129,4 +127,3 @@ public class VoluntarioController {
     }
 
 }
-

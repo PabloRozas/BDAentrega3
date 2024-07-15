@@ -15,7 +15,7 @@ public interface EmergenciaHabilidadRepository extends JpaRepository<EmergenciaH
         // Crear
         @Transactional
         @Modifying
-        @Query(value = "INSERT INTO eme_habilidad (id_habilidad, id_emergencia)" +
+        @Query(value = "INSERT INTO emergencia_habilidad (id_habilidad, id_emergencia)" +
                         " VALUES (:id_habilidad, :id_emergencia)", nativeQuery = true)
         public void insertarEmergenciaHabilidad(@Param("id_habilidad") Long id_habilidad,
                         @Param("id_emergencia") Long id_emergencia);
