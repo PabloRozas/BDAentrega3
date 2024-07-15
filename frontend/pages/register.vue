@@ -1,8 +1,6 @@
 <template>
     <main>
-        <div id="circle">
-            <div class="circle"></div>
-        </div>
+        <div id="circle"></div>
 
         <img src="../images/mundo.svg" alt="mundo">
         <div class="containerLogin">
@@ -44,8 +42,8 @@ export default {
     mounted() {
         setInterval(() => {
             // posicion random en x y y dentro de los limites de la pantalla
-            const x = Math.random() * window.innerWidth - 10;
-            const y = Math.random() * window.innerHeight - 10;
+            const x = Math.random() * window.innerWidth - 50;
+            const y = Math.random() * window.innerHeight - 50;
             // color random entre las opciones de rojo y naranja
             const color = Math.random() > 0.5 ? 'red' : 'orange';
             // crear el circle
@@ -73,16 +71,47 @@ export default {
     },
     methods: {
         createCircles(x, y, color) {
-            const circle = document.createElement('div');
-            circle.classList.add('circle');
-            circle.style.left = x + 'px';
-            circle.style.top = y + 'px';
-            circle.style.backgroundColor = color;
-            document.getElementById('circle').appendChild(circle);
-            setTimeout(() => {
-                circle.remove();
-            }, 4000);
+            const svgNS = "http://www.w3.org/2000/svg"; // Namespace for SVG elements
 
+            // Create SVG container
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("width", "50px");
+            svg.setAttribute("height", "50px");
+            svg.setAttribute("viewBox", "0 0 100 100");
+            svg.style.position = "absolute";
+            svg.style.left = x + 'px';
+            svg.style.top = y + 'px';
+            svg.style.transform = "translate(-50%, -50%)";
+            svg.style.transition = "all 3s";
+
+            // Create circle element
+            const circle = document.createElementNS(svgNS, "circle");
+            circle.setAttribute("cx", "50");
+            circle.setAttribute("cy", "50");
+            circle.setAttribute("r", "0");
+            circle.setAttribute("fill", "none");
+            circle.setAttribute("stroke", color);
+            circle.setAttribute("stroke-width", "4");
+            circle.classList.add('animate-circle');
+
+            // Append circle to SVG container
+            svg.appendChild(circle);
+
+            // Append SVG to the container
+            document.getElementById('circle').appendChild(svg);
+
+
+            // Trigger the animation
+            setTimeout(() => {
+                circle.setAttribute("r", "20"); // Change radius to 10
+                circle.setAttribute("stroke-width", "0"); // Change stroke width to 0
+            }, 0);
+
+
+            // Remove the SVG after 4 seconds
+            setTimeout(() => {
+                svg.remove();
+            }, 2000);
         },
         registrarUsuario(event) {
             event.preventDefault();
@@ -107,7 +136,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 body {
     background-color: black;
     color: white;
@@ -133,7 +162,7 @@ img {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Astonpoliz', sans-serif;
 }
 
 .formLogin {
@@ -177,7 +206,7 @@ form button {
     padding: 10px;
     background-color: black;
     cursor: pointer;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Astonpoliz', sans-serif;
     transition: all 0.3s;
     color: #9AEBA3;
     margin-top: 15px;
@@ -189,21 +218,17 @@ form button:hover {
     color: black;
 }
 
-.circle {
-    background-color: red;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    position: absolute;
-    top: -10%;
-    left: -10%;
-    transform: translate(-50%, -50%);
+.register {
+    color: #0281F6
+}
+
+#circle svg {
     z-index: -1;
-    filter: blur(6px);
+    filter: blur(0.2px);
     transition: all 3s;
 }
 
-.register {
-    color: #0281F6
+.animate-circle {
+    transition: r 2.2s ease-in-out, stroke-width 2.2s ease-in-out;
 }
 </style>

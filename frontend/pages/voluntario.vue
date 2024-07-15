@@ -51,7 +51,7 @@
   <FooterComponent></FooterComponent>
 </template>
 
-<script scoped>
+<script>
 import axios from "axios";
 
 import SideMenu from '@/components/SideMenu.vue';
@@ -103,7 +103,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 .main-container {
   position: relative;
   overflow: hidden;
