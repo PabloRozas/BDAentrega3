@@ -115,14 +115,15 @@ export default {
         },
         registrarUsuario(event) {
             event.preventDefault();
-            axios.post('http://localhost:8080/voluntario/add', {
-                nombreVoluntario: this.nombre,
-                contrasenaVoluntario: this.password,
-                correoVoluntario: this.email,
-                numeroDocumentoVoluntario: this.numDocumento,
+            axios.post('http://localhost:8080/voluntario/register', {
+                nombre: this.nombre,
+                contrasena: this.password,
+                correo: this.email,
+                numeroDocumento: this.numDocumento,
                 equipamientoVoluntario: this.equipamientoVoluntario,
                 latitud: this.latitude,
                 longitud: this.longitude,
+                equipamiento: "Ninguno"
             }).then(response => {
                 console.log(response);
                 this.$router.push('/login');
