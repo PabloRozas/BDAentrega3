@@ -1,16 +1,29 @@
 package bdabackend.bda.Service;
 
+import bdabackend.bda.Entity.TareaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.LookupOperation;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import bdabackend.bda.Entity.VoluntarioEntity;
 import bdabackend.bda.Repository.VoluntarioRepository;
 
 import java.util.List;
 
+
+
 @Service
 public class VoluntarioService {
     @Autowired
     private VoluntarioRepository voluntarioRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     // CREAR
 
@@ -101,6 +114,27 @@ public class VoluntarioService {
         } else {
             System.out.println("No se encontró el voluntario con el id: " + id);
         }
+    }
+
+    public List<TareaEntity> getTareasConVoluntarios(String idTarea) {
+        // Define la operación de lookup para unir con la colección "voluntario"
+        LookupOperation lookupOperation = LookupOperation.newLookup()
+                .from("voluntario")
+                .localField("idTarea")
+                .foreignField("_id")
+                .as("voluntariosDetalles");
+
+        // Construye la agregación
+        Aggregation aggregation = Aggregation.newAggregation(
+                match(Criteria.where("_id").is(idTarea)),  // Filtra por el id de la tarea
+                lookupOperation  // Realiza la operación de lookup con la colección "voluntario"
+        );
+
+        // Ejecuta la agregación
+        AggregationResults<TareaEntity> results = mongoTemplate.aggregate(aggregation, "Tarea", TareaEntity.class);
+
+        // Retorna los resultados mapeados
+        return results.getMappedResults();
     }
 
     // ! REVISAR

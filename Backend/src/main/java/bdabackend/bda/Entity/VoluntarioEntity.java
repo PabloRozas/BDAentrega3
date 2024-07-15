@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,8 @@ public class VoluntarioEntity {
 
     private String numeroDocumento;
 
+    private String idTarea;
+
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private GeoJsonPoint zonaVivienda;
 
@@ -32,18 +35,21 @@ public class VoluntarioEntity {
 
     private Set<VoluntarioHabilidadEntity> voluntarioHabilidad = new HashSet<>();
 
+
+
     // Constructores
     public VoluntarioEntity() {
     }
 
     public VoluntarioEntity(String nombre, String correo, String numeroDocumento, GeoJsonPoint zonaVivienda,
-            String contrasena, String equipamiento) {
+            String contrasena, String equipamiento, String idTarea) {
         this.nombre = nombre;
         this.correo = correo;
         this.numeroDocumento = numeroDocumento;
         this.zonaVivienda = zonaVivienda;
         this.contrasena = contrasena;
         this.equipamiento = equipamiento;
+        this.idTarea = idTarea;
     }
 
     // Getters and Setters
@@ -53,6 +59,14 @@ public class VoluntarioEntity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getIdTarea() {
+        return idTarea;
+    }
+
+    public void setIdTarea(String idTarea) {
+        this.idTarea = idTarea;
     }
 
     public String getNombre() {

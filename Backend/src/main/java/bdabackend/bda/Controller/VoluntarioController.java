@@ -1,5 +1,6 @@
 package bdabackend.bda.Controller;
 
+import bdabackend.bda.Entity.TareaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,12 +50,14 @@ public class VoluntarioController {
         Double longitud = Double.parseDouble(body.get("longitud"));
         String contrasena = body.get("contrasena");
         String equipamiento = body.get("equipamiento");
+        String idTarea = body.get("idTarea");
+
 
         // Se crea un VoluntarioEntity con los parametros recibidos
         VoluntarioEntity voluntario = new VoluntarioEntity(nombre, correo,
                 numeroDocumento, new GeoJsonPoint(longitud, latitud),
                 passwordEncoder.encode(contrasena),
-                equipamiento);
+                equipamiento, idTarea);
 
         // Se guarda el voluntario en la base de datos
         voluntarioService.insertarVoluntario(voluntario);
@@ -119,4 +122,11 @@ public class VoluntarioController {
         voluntarioService.eliminarVoluntarioPorId(idVoluntario);
     }
 
+    @GetMapping("/VoluntariosPorTarea")
+    public List<TareaEntity> getTareasByVoluntarioId(@RequestBody Map<String, String> body) {
+        String id = body.get("id");
+        return voluntarioService.getTareasConVoluntarios(id);
+    }
+
 }
+
