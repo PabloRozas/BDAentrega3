@@ -18,3 +18,22 @@
     font-weight: normal;
     font-style: normal;
 }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    min-width: 100vh;
+    min-height: 100vh;
+}
+
+body {
+    background-color: black;
+    color: white;
+    cursor: none;
+    margin: 0;
+}
+  

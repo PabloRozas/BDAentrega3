@@ -1,0 +1,538 @@
+// cursor none
+* {
+  cursor: none;
+}
+
+// layout default
+.imgFondoPrincipal {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: -10;
+  filter: brightness(0.4);
+  object-fit: cover;
+}
+
+// index
+.containerIndex {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: "Astonpoliz", sans-serif;
+}
+
+.containerText {
+  width: 70%;
+  display: flex;
+  text-align: center;
+  margin-top: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid white;
+  border-radius: 10px;
+}
+
+.containerText::after {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 12vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+  filter: blur(6px);
+}
+
+.containerButton {
+  /* grid de una fila con dos columnas */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+  width: 70%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.login {
+  transition: all 0.5s;
+  border: 1px solid white;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  order: 1;
+}
+
+.login:hover {
+  background-color: #9aeba3;
+  border: 1px solid #9aeba3;
+  color: black;
+}
+
+.logup {
+  transition: all 0.5s;
+  border: 1px solid white;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  order: 2;
+}
+
+.logup:hover {
+  background-color: #9aeba3;
+  border: 1px solid #9aeba3;
+  color: black;
+}
+
+.titleRESQ {
+  font-size: 6rem;
+  margin: 0;
+  font-family: "Lemon Milk", sans-serif;
+}
+
+// form
+.containerLogin {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Astonpoliz", sans-serif;
+}
+
+.containerLogin::after {
+  content: "";
+
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+  filter: blur(6px);
+}
+
+.containerLogin h1 {
+  color: white;
+  margin-bottom: 20px;
+}
+
+.containerLogin p {
+  color: red;
+}
+
+.formLogin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.register {
+  color: #45c4b0;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+form input {
+  width: 20vh;
+  height: 10px;
+  border: none;
+  border-bottom: 1px solid white;
+  background-color: black;
+  color: white;
+  border-radius: 0px;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+form input:focus {
+  outline: none;
+  border-bottom: 1px solid #347355;
+}
+
+::placeholder {
+  color: white;
+}
+
+form button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20vh;
+  height: 30px;
+  border: 1px solid #9aeba3;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: black;
+  font-family: "Astonpoliz", sans-serif;
+  transition: all 0.3s;
+  color: #9aeba3;
+  margin-top: 15px;
+}
+
+form button:hover {
+  background-color: #9aeba3;
+  border: 1px solid #9aeba3;
+  color: black;
+}
+
+// admin
+.mainMenu {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr;
+  gap: 10%;
+}
+
+.svg-path {
+  position: absolute;
+  fill: black;
+  z-index: 1;
+}
+
+.formaEmergencias {
+  display: grid;
+  grid-template-rows: 15% 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
+  grid-template-areas: "nombre" "descripcion" "fecha" "hora" "ubicacion" "boton";
+  gap: 10px;
+  padding: 10px;
+  padding-top: 0;
+}
+
+.formaEmergencias h1 {
+  grid-area: nombre;
+  margin: 0;
+  font-size: 25px;
+  margin-bottom: 5px;
+  font-family: "Astonpoliz", sans-serif;
+  /* justify-self: center; */
+}
+
+/* Estilos del menu (toggle) */
+.menu-container {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: none;
+  transition: top 0.5s ease;
+  z-index: 1000;
+}
+
+.botonEnviarEmergencia {
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 16px;
+  font-family: "Astonpoliz", sans-serif;
+  border: none;
+  border-radius: 4px;
+}
+
+#toggle-menu {
+  width: 30px;
+  height: 30px;
+  margin: 20px;
+  stroke: #ffffff;
+  stroke-width: 9;
+  /* cursor: pointer; */
+  z-index: 2000;
+}
+
+header {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+}
+
+header img {
+  /* position: absolute; */
+  width: 30px;
+  height: 30px;
+  margin: 20px;
+  filter: invert(1);
+  /* cursor: pointer; */
+  z-index: 1000;
+}
+
+header h1 {
+  /* position: absolute; */
+  color: #ffffff;
+  font-size: 30px;
+  font-family: "Lemon Milk", sans-serif;
+  z-index: 1000;
+}
+
+header svg {
+  position: absolute;
+  transition: 0.5s all ease-in-out;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.menuHeader {
+  position: absolute;
+  display: grid;
+  /* La primera columna usa el 70% y la segunda el 30% */
+  grid-template-columns: 70% 30%;
+  grid-template-rows: 1fr;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.menu1-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  z-index: 1;
+}
+
+.menu1-container h1 {
+  color: #ffffff;
+  filter: brightness(0.5);
+  transition: 0.3s all;
+  margin: 0;
+  margin-left: 5%;
+  font-size: 100px;
+  z-index: 1;
+}
+
+.menu1-container h1:hover {
+  color: #9aeba3;
+  filter: brightness(1);
+  /* cursor: pointer; */
+}
+
+.menu1-container h1.active {
+  color: #dafdba;
+  filter: brightness(1);
+}
+
+.menu2-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  z-index: 1;
+  transition: 0.3s all;
+  animation: fadeIn 1s;
+}
+
+.menu2-container h1 {
+  /* cursor: pointer; */
+  transition: 0.3s all;
+}
+
+.menu2-container h1:hover {
+  color: #9aeba3;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.menu-container.open {
+  top: 0;
+}
+
+.nav-back {
+  background-color: #000000;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  z-index: 1;
+}
+
+.container-admin {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  color: white;
+  z-index: 1;
+}
+
+nav img {
+  width: 30px;
+  height: 30px;
+  margin: 20px;
+  filter: invert(1);
+  /* cursor: pointer; */
+  z-index: 1;
+}
+
+nav {
+  background-color: #000000;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  z-index: 1;
+}
+
+nav h1 {
+  color: #ffffff;
+  font-size: 30px;
+  font-family: "Lemon Milk", sans-serif;
+}
+
+nav h3 {
+  color: #ffffff;
+  font-size: 25px;
+  margin: 0%;
+  margin-left: 20px;
+  font-family: "Astonpoliz", sans-serif;
+}
+
+.containerTitleNav {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+  margin: 20px;
+  width: 97%;
+  height: 84vh;
+}
+
+.section2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.botonEmeregenciaOff {
+  transition: 0.3s all;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 20px;
+  font-family: "Astonpoliz", sans-serif;
+  border: none;
+  border-radius: 10px;
+  /* cursor: pointer; */
+  margin: 20px;
+  width: 230px;
+  height: 60px;
+  justify-self: center;
+  align-self: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.botonEmeregenciaOff.active {
+  transition: 0.3s all;
+  width: 100%;
+  height: 85%;
+  padding: 0;
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  display: grid;
+  grid-template-rows: 15% 85%;
+  grid-template-columns: 100%;
+  /* posiciones de las filas */
+  grid-template-areas: "titulo" "form";
+  /* cursor: default; */
+}
+
+.emergenciaBack {
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 15px;
+  font-family: "Astonpoliz", sans-serif;
+  border: none;
+  border-radius: 5px;
+  /* cursor: pointer; */
+  margin-left: 7px;
+  width: 55px;
+  height: 30px;
+  justify-self: center;
+  align-self: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  transition: 0.3s all;
+}
+
+.emergenciaBack:hover {
+  transition: 0.3s all;
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.botonEmeregenciaOff:hover {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.containerListTareasRegiones {
+  width: 100%;
+  height: 300px;
+  border: 1px solid black;
+  border-radius: 5px;
+  overflow: auto;
+  background-color: #ffffff;
+  font-family: "Astonpoliz", sans-serif;
+}
+
+.containerListTareasRegiones ul {
+  padding: 0;
+}
+
+.containerListTareasRegiones li {
+  padding: 5px;
+  padding-left: 10px;
+  color: black;
+  /* cursor: pointer; */
+}
+
+.containerListTareasRegiones span img {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  position: relative;
+}
+
+.icon-container {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  position: relative;
+  top: 5px;
+}
+
+.containerListTareasRegiones li:hover {
+  background-color: #f2f2f2;
+}
