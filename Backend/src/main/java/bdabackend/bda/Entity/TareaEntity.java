@@ -17,6 +17,9 @@ public class TareaEntity {
     @Field("descripcion")
     private String descripcion;
 
+    @Field("requerimientos")
+    private String requerimientos;
+
     @Field("tipo")
     private String tipo;
 
@@ -70,6 +73,14 @@ public class TareaEntity {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getRequerimientos() {
+        return requerimientos;
+    }
+
+    public void setRequerimientos(String requerimientos) {
+        this.requerimientos = requerimientos;
     }
 
     public String getTipo() {

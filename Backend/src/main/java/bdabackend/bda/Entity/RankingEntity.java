@@ -10,7 +10,7 @@ public class RankingEntity {
 
     private Integer nivel;
 
-    private String tareaRanking;
+    private String nombreTarea;
 
     private String nombreVoluntario;
 
@@ -24,10 +24,10 @@ public class RankingEntity {
     public RankingEntity() {
     }
 
-    public RankingEntity(int nivel, String tareaRanking, String nombreVoluntario, String numeroDocumentoVoluntario,
+    public RankingEntity(int nivel, String nombreTarea, String nombreVoluntario, String numeroDocumentoVoluntario,
             String idTarea, String idVoluntario) {
         this.nivel = nivel;
-        this.tareaRanking = tareaRanking;
+        this.nombreTarea = nombreTarea;
         this.nombreVoluntario = nombreVoluntario;
         this.numeroDocumentoVoluntario = numeroDocumentoVoluntario;
         this.idTarea = idTarea;
@@ -47,12 +47,12 @@ public class RankingEntity {
         this.nivel = nivel;
     }
 
-    public String getTareaRanking() {
-        return this.tareaRanking;
+    public String getNombreTarea() {
+        return this.nombreTarea;
     }
 
-    public void setTareaRanking(String tareaRanking) {
-        this.tareaRanking = tareaRanking;
+    public void setNombreTarea(String nombreTarea) {
+        this.nombreTarea = nombreTarea;
     }
 
     public String getNombreVoluntario() {

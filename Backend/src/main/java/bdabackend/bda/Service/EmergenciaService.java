@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import bdabackend.bda.Entity.EmergenciaEntity;
 import bdabackend.bda.Repository.EmergenciaRepository;
 
 @Service

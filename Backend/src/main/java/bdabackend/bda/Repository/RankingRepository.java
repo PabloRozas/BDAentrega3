@@ -10,14 +10,32 @@ import bdabackend.bda.Entity.RankingEntity;
 @Repository
 public interface RankingRepository extends MongoRepository<RankingEntity, String> {
         // Crear
+        /**
+         * Inserta un nuevo ranking en la base de datos
+         * 
+         * @param ranking ranking a insertar
+         * @return ranking insertado
+         */
         RankingEntity insert(RankingEntity ranking);
 
         // Leer
+
+        /**
+         * Obtiene todos los rankings de la base de datos
+         * 
+         * @return lista de rankings
+         */
         List<RankingEntity> findAll();
 
         RankingEntity findByid(String id);
 
         // Delete
+
+        /**
+         * Elimina un ranking de la base de datos
+         * 
+         * @param ranking ranking a eliminar
+         */
         @Query(value = "{'id': ?0}", delete = true)
         void deleteByid(String id);
 
