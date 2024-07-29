@@ -1,0 +1,5 @@
+export enum RoleTypes {
+  ADMIN = "COORDINADOR",
+  VOLUNTARIO = "VOLUNTARIO",
+  VISITANTE = "VISITANTE",
+}
