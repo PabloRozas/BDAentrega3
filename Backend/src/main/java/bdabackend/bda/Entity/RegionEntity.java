@@ -11,11 +11,11 @@ public class RegionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "geometria", columnDefinition = "geometry(MultiPolygon,4326)")
+    public MultiPolygon geometria;
+
     @Column(name = "nombre")
     private String nombre;
-
-    @Column(name = "geometria")
-    public MultiPolygon geometria;
 
     public RegionEntity(String nombre, MultiPolygon geometria) {
         this.nombre = nombre;

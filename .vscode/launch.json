@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-BackendApplication<bda>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "bdabackend.bda.BackendApplication",
+      "projectName": "bda",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

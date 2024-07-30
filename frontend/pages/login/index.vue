@@ -31,10 +31,9 @@ const email = ref('');
 const password = ref('');
 const error = ref('');
 
-const logearUser = () => {
-    // para que no se recargue la página
+const logearUser = (event: Event) => {
     event.preventDefault();
-    axios.post('http://localhost:8080/coordinador/login', {
+    axios.post('http://localhost:8080/gateway/login', {
         correo: email.value,
         contrasena: password.value
     })

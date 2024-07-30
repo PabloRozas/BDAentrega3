@@ -50,8 +50,8 @@ public class TareaController {
             Double longitud = Double.parseDouble(body.get("longitud"));
             Point zona = new Point(longitud, latitud);
 
-
-            TareaEntity nuevaTarea = mongoTareaService.insertarTarea(nombreTarea, descripcionTarea, tipoTarea, zona, emergencia);
+            TareaEntity nuevaTarea = mongoTareaService.insertarTarea(nombreTarea, descripcionTarea, tipoTarea, zona,
+                    emergencia);
             logger.info("Tarea agregada exitosamente: {}", nuevaTarea);
             return ResponseEntity.ok(nuevaTarea);
         } catch (Exception e) {
@@ -71,6 +71,12 @@ public class TareaController {
             logger.error("Error al eliminar la tarea: ", e);
             return ResponseEntity.status(500).build();
         }
+    }
+
+    @GetMapping("/tareaRegion/{nombreRegion}")
+    public List<TareaEntity> getTareaByRegion(@PathVariable String nombreRegion) throws Exception {
+        logger.info("Recibiendo solicitud para obtener tareas en la region: {}", nombreRegion);
+        return mongoTareaService.buscarTareaPorRegion(nombreRegion);
     }
 
 }

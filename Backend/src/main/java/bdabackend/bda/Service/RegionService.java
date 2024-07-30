@@ -2,6 +2,8 @@ package bdabackend.bda.Service;
 
 import bdabackend.bda.Entity.RegionEntity;
 import bdabackend.bda.Repository.RegionRepository;
+import bdabackend.bda.Utils.GeoUtils;
+
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.io.ParseException;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RegionService {
@@ -20,8 +23,17 @@ public class RegionService {
         return regionRepository.findAllRegiones();
     }
 
-    public RegionEntity nombre(String nombre) {
-        return regionRepository.findByNombre(nombre);
+    public RegionEntity nombre(String nombre) throws ParseException {
+        Map<String, Object> result = regionRepository.findByNombre(nombre);
+        if (result != null) {
+            RegionEntity region = new RegionEntity();
+            region.setId((Long) result.get("id"));
+            region.setNombre((String) result.get("nombre"));
+            String wkt = (String) result.get("geometria");
+            region.setGeometria(GeoUtils.wktToMultiPolygon(wkt));
+            return region;
+        }
+        return null;
     }
 
     public MultiPolygon convertBytesToMultiPolygon(byte[] geomBytes) {
