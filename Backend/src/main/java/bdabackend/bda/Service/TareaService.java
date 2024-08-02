@@ -27,8 +27,8 @@ public class TareaService {
 
     // Guardar una nueva tarea o actualizar una existente
     public TareaEntity insertarTarea(String nombreTarea, String descripcionTarea, String tipoTarea, Point zona,
-            Long emergencia) {
-        TareaEntity tarea = new TareaEntity(nombreTarea, descripcionTarea, tipoTarea, zona, emergencia);
+            Long emergencia, String requerimientos) {
+        TareaEntity tarea = new TareaEntity(nombreTarea, descripcionTarea, tipoTarea, zona, emergencia, requerimientos);
         logger.info("Guardando tarea: {}", tarea);
         return mongoTareaRepository.save(tarea);
     }

@@ -45,13 +45,18 @@ public class TareaController {
             String nombreTarea = body.get("nombreTarea");
             String descripcionTarea = body.get("descripcionTarea");
             String tipoTarea = body.get("tipoTarea");
+
+
+            String requerimiento = body.get("equ");
+
+
             Long emergencia = Long.parseLong(body.get("emergencia"));
             Double latitud = Double.parseDouble(body.get("latitud"));
             Double longitud = Double.parseDouble(body.get("longitud"));
             Point zona = new Point(longitud, latitud);
 
             TareaEntity nuevaTarea = mongoTareaService.insertarTarea(nombreTarea, descripcionTarea, tipoTarea, zona,
-                    emergencia);
+                    emergencia, requerimiento);
             logger.info("Tarea agregada exitosamente: {}", nuevaTarea);
             return ResponseEntity.ok(nuevaTarea);
         } catch (Exception e) {

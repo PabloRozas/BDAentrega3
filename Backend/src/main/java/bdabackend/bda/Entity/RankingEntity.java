@@ -8,7 +8,7 @@ public class RankingEntity {
     @Id
     private String id;
 
-    private Integer nivel;
+    private Double nivel;
 
     private String nombreTarea;
 
@@ -24,7 +24,7 @@ public class RankingEntity {
     public RankingEntity() {
     }
 
-    public RankingEntity(int nivel, String nombreTarea, String nombreVoluntario, String numeroDocumentoVoluntario,
+    public RankingEntity(Double nivel, String nombreTarea, String nombreVoluntario, String numeroDocumentoVoluntario,
             String idTarea, String idVoluntario) {
         this.nivel = nivel;
         this.nombreTarea = nombreTarea;
@@ -39,11 +39,11 @@ public class RankingEntity {
         return this.id;
     }
 
-    public int getNivel() {
+    public Double getNivel() {
         return this.nivel;
     }
 
-    public void setNivel(int nivel) {
+    public void setNivel(Double nivel) {
         this.nivel = nivel;
     }
 

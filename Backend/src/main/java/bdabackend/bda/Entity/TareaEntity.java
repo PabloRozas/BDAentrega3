@@ -33,12 +33,13 @@ public class TareaEntity {
     public TareaEntity() {
     }
 
-    public TareaEntity(String nombre, String descripcion, String tipo, Point zona, Long idEmergencia) {
+    public TareaEntity(String nombre, String descripcion, String tipo, Point zona, Long idEmergencia, String requerimientos) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.zona = zona;
         this.idEmergencia = idEmergencia;
+        this.requerimientos = requerimientos;
     }
 
     // Getters y Setters

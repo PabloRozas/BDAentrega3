@@ -1,6 +1,8 @@
 package bdabackend.bda.Controller;
 
 import bdabackend.bda.Entity.TareaEntity;
+import bdabackend.bda.Repository.VoluntarioRepository;
+import bdabackend.bda.Service.RankingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +27,9 @@ import java.util.Map;
 public class VoluntarioController {
     @Autowired
     private VoluntarioService voluntarioService;
+
+    @Autowired
+    private RankingService rankingService;
 
     @Autowired
     private AuthService authService;
@@ -61,6 +66,17 @@ public class VoluntarioController {
         voluntarioService.insertarVoluntario(voluntario);
     }
 
+
+
+    @PutMapping("/modificar")
+    public void updateEquipamiento(@RequestBody Map<String, String> body) {
+        String idVoluntario = body.get("idVoluntario");
+        // Se recibe el nuevo valor de equipamiento
+        String nuevoEquipamiento = body.get("equipamiento");
+        // Actualizar el equipamiento del voluntario en la base de datos
+        voluntarioService.actualizarEquipamiento(idVoluntario, nuevoEquipamiento);
+        rankingService.modificarRankingVoluntario(idVoluntario);
+    }
     // LEER
 
     /**
@@ -72,6 +88,7 @@ public class VoluntarioController {
      * @return Un ResponseEntity con un AuthenticationResponse, este contiene el
      *         token que se debe usar en las demas consultas.
      */
+
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody Map<String, String> body) {
         // Se recibe el correo y la contraseña

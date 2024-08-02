@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ranking")
@@ -27,7 +28,17 @@ public class RankingController {
         return rankingService.listaRanking();
     }
 
-    // @PostMapping("/add")
+    @PostMapping("/addtarea")
+    public void crearRankingTarea(@RequestBody Map<String, String> body){
+        String idTarea = body.get("idTarea");
+        rankingService.crearRankingTarea(idTarea);
+    }
+
+    @PostMapping("/addvoluntario")
+    public void crearRankingVoluntario(@RequestBody Map<String, String> body){
+        String idVoluntario = body.get("idVoluntario");
+        rankingService.crearRankingVoluntario(idVoluntario);
+    }
     // public void crearRanking(@RequestBody Map<String, String> body) {
     // String idVoluntario = body.get("idVoluntario");
     // Long idEmergencia = Long.parseLong(body.get("idEmergencia"));

@@ -64,9 +64,20 @@ public class VoluntarioService {
      */
     public VoluntarioEntity buscarPorCorreo(String correo) {
         VoluntarioEntity voluntarioData = voluntarioRepository.findByCorreo(correo);
+
         return voluntarioData;
     }
 
+    public void actualizarEquipamiento(String id, String nuevoEquipamiento) {
+        VoluntarioEntity voluntarioExistente = voluntarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Voluntario no encontrado con id: " + id));
+
+        // Actualizar el campo equipamiento del voluntario existente
+        voluntarioExistente.setEquipamiento(nuevoEquipamiento);
+
+        // Guardar los cambios
+        voluntarioRepository.save(voluntarioExistente);
+    }
     /**
      * Busca un voluntario en la base de datos por su id y devuelve su nombre.
      * 

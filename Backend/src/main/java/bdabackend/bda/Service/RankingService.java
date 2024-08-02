@@ -1,16 +1,15 @@
 package bdabackend.bda.Service;
 
+import bdabackend.bda.Entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import bdabackend.bda.Entity.RankingEntity;
-import bdabackend.bda.Entity.TareaEntity;
-import bdabackend.bda.Entity.VoluntarioEntity;
 import bdabackend.bda.Repository.RankingRepository;
 import bdabackend.bda.Utils.GeoUtils;
 
 import java.io.UnsupportedEncodingException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class RankingService {
@@ -19,6 +18,12 @@ public class RankingService {
 
     @Autowired
     private VoluntarioService voluntarioService;
+
+    @Autowired
+    private VoluntarioHabilidadService voluntarioHabilidadService;
+
+    @Autowired
+    private EmergenciaHabilidadSevice emergenciaHabilidadSevice;
 
     @Autowired
     private TareaService tareaService;
@@ -36,7 +41,7 @@ public class RankingService {
      * @param idVoluntario              El id del voluntario.
      * 
      */
-    public void insertarRanking(int nivel, String tareaRanking, String nombreVoluntario,
+    public void insertarRanking(Double nivel, String tareaRanking, String nombreVoluntario,
             String numeroDocumentoVoluntario, String idTarea, String idVoluntario) {
 
         RankingEntity ranking = new RankingEntity(nivel, tareaRanking, nombreVoluntario, numeroDocumentoVoluntario,
@@ -51,17 +56,29 @@ public class RankingService {
      * 
      */
     public void crearRankingVoluntario(String idVoluntario) {
-        Integer puntaje = 0;
         // Se buscan todas las tareas
         List<TareaEntity> tareas = tareaService.listaTarea();
 
         // Se busca el voluntario
         VoluntarioEntity voluntario = voluntarioService.buscarVoluntarioPorId(idVoluntario);
 
+        // Se busca la voluntariohabilidad
+        List<VoluntarioHabilidadEntity> voluntarioHabilidades = voluntarioHabilidadService.listaVoluntarioHabilidad();
+
+        // Se busca la emergenciahabilidad
+        List<EmergenciaHabilidadEntity> emergenciaHabilidades = emergenciaHabilidadSevice.listaEmergenciaHabilidad();
+
+
         // Se bucan todos los rankings
         List<RankingEntity> rankings = listaRanking();
         // Total de rankings
+        /*
         int totalRankings = rankings.size();
+
+        if (totalRankings == 0){
+            totalRankings = 1;
+        }
+         */
 
         // Si no hay tareas, no se crea el ranking
         if (tareas.isEmpty()) {
@@ -70,17 +87,64 @@ public class RankingService {
 
         // Se recorren todas las tareas
         for (TareaEntity tarea : tareas) {
+            Double puntaje = 0.0;
+            Double puntaje_2 = 0.0;
+            Double puntaje_3 = 0.0;
             // Por cada una de las tareas se crea un ranking según la distancia entre el
             // voluntario y la tarea
             double distancia = GeoUtils.calcularDistancia(voluntario.getZonaVivienda(), tarea.getZona());
             System.out.println("Distancia: " + distancia);
             // Si la distancia es menor o igual a 20 km el ranking al puntaje se le suma 2
-            if (distancia <= 20000) {
+            if (distancia >= 0.0 && distancia <= 15000.0) {
+                puntaje += 3;
+            } else if (distancia > 15000.0 && distancia <= 40000.0) {
                 puntaje += 2;
+            } else if (distancia > 40000.0 && distancia <= 60000.0) {
+                puntaje += 1;
             }
+            // Se le agrega el peso elegido por todos
+            puntaje *= 0.6;
+
+            // Si el voluntario tiene el equipamiento necesario para la tarea, al puntaje se
+            // le suma 2
+
+            String equipo = voluntario.getEquipamiento();
+            String[] elementos = equipo.split(",");
+            String equipamientoTarea = tarea.getRequerimientos();
+            String[] elementosTarea = equipamientoTarea.split(",");
+            for (String elemento : elementos) {
+                for (String elementoTarea : elementosTarea) {
+                    if (elemento.contains(elementoTarea)) {
+                        puntaje_2 += 1;
+                    }
+                }
+            }
+            // Se le agrega el peso elegido por todos
+            puntaje_2 *= 0.1;
+
+            String id = voluntario.getId();
+            for (VoluntarioHabilidadEntity voluntarioHabilidad : voluntarioHabilidades){
+                String idvoluntario = voluntarioHabilidad.getVoluntario();
+                if (Objects.equals(id, idvoluntario)){
+                    Long idhabilidad = voluntarioHabilidad.getHabilidad().getId();
+                    for (EmergenciaHabilidadEntity emergenciaHabilidad : emergenciaHabilidades){
+                        Long idhabilidadcomparar = emergenciaHabilidad.getHabilidad().getId();
+                        if (Objects.equals(idhabilidad, idhabilidadcomparar)){
+                            Long idemergencia = emergenciaHabilidad.getEmergencia().getId();
+                            Long idemergenciacompara = tarea.getEmergencia();
+                            if (Objects.equals(idemergencia, idemergenciacompara)){
+                                puntaje_3 += 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            // Se le agrega el peso elegido por todos
+            puntaje_3 *= 0.3;
 
             // Se calcula el nivel del voluntario
-            int nivel = puntaje / totalRankings;
+            Double nivel = (puntaje + puntaje_2 + puntaje_3) ;
 
             // Se crea el ranking
             insertarRanking(nivel, tarea.getNombre(), voluntario.getNombre(), voluntario.getNumeroDocumento(),
@@ -94,17 +158,27 @@ public class RankingService {
      * @param idTarea
      */
     public void crearRankingTarea(String idTarea) {
-        Integer puntaje = 0;
         // Se buscan todos los voluntarios
         List<VoluntarioEntity> voluntarios = voluntarioService.listaVoluntario();
 
         // Se busca la tarea
         TareaEntity tarea = tareaService.buscarTareaPorId(idTarea);
 
+        // Se busca la voluntariohabilidad
+        List<VoluntarioHabilidadEntity> voluntarioHabilidades = voluntarioHabilidadService.listaVoluntarioHabilidad();
+
+        // Se busca la emergenciahabilidad
+        List<EmergenciaHabilidadEntity> emergenciaHabilidades = emergenciaHabilidadSevice.listaEmergenciaHabilidad();
+
         // Se bucan todos los rankings
         List<RankingEntity> rankings = listaRanking();
         // Total de rankings
+        /*
         int totalRankings = rankings.size();
+        if (totalRankings == 0){
+            totalRankings = 1;
+        }
+         */
 
         // Si no hay voluntarios, no se crea el ranking
         if (voluntarios.isEmpty()) {
@@ -113,36 +187,177 @@ public class RankingService {
 
         // Se recorren todos los voluntarios
         for (VoluntarioEntity voluntario : voluntarios) {
+            Double puntaje = 0.0;
+            Double puntaje_2 = 0.0;
+            Double puntaje_3 = 0.0;
             // Por cada uno de los voluntarios se crea un ranking según la distancia entre
             // el
             // voluntario y la tarea
             double distancia = GeoUtils.calcularDistancia(voluntario.getZonaVivienda(), tarea.getZona());
             System.out.println("Distancia: " + distancia);
             // Si la distancia es menor o igual a 20 km el ranking al puntaje se le suma 2
-            if (distancia <= 20000) {
+            if (distancia >= 0.0 && distancia <= 15000.0) {
+                puntaje += 3;
+            } else if (distancia > 15000.0 && distancia <= 40000.0) {
                 puntaje += 2;
+            } else if (distancia > 40000.0 && distancia <= 60000.0) {
+                puntaje += 1;
             }
-
+            // Se le agrega el peso elegido por todos
+            puntaje *= 0.6;
             // Si el voluntario tiene el equipamiento necesario para la tarea, al puntaje se
             // le suma 2
+
             String equipo = voluntario.getEquipamiento();
-            String[] elementos = equipo.split("\s,\s");
+            String[] elementos = equipo.split(",");
             String equipamientoTarea = tarea.getRequerimientos();
-            String[] elementosTarea = equipamientoTarea.split("\s,\s");
+            String[] elementosTarea = equipamientoTarea.split(",");
             for (String elemento : elementos) {
                 for (String elementoTarea : elementosTarea) {
-                    if (elemento.equals(elementoTarea)) {
-                        puntaje += 1;
+                    if (elemento.contains(elementoTarea)) {
+                        puntaje_2 += 1;
                     }
                 }
             }
+            // Se le agrega el peso elegido por todos
+            puntaje_2 *= 0.1;
+
+            String id = voluntario.getId();
+            for (VoluntarioHabilidadEntity voluntarioHabilidad : voluntarioHabilidades){
+                String idvoluntario = voluntarioHabilidad.getVoluntario();
+                if (Objects.equals(id, idvoluntario)){
+                    Long idhabilidad = voluntarioHabilidad.getHabilidad().getId();
+                    for (EmergenciaHabilidadEntity emergenciaHabilidad : emergenciaHabilidades){
+                        Long idhabilidadcomparar = emergenciaHabilidad.getHabilidad().getId();
+                        if (Objects.equals(idhabilidad, idhabilidadcomparar)){
+                            Long idemergencia = emergenciaHabilidad.getEmergencia().getId();
+                            Long idemergenciacompara = tarea.getEmergencia();
+                            if (Objects.equals(idemergencia, idemergenciacompara)){
+                                puntaje_3 += 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            // Se le agrega el peso elegido por todos
+            puntaje_3 *= 0.3;
 
             // Se calcula el nivel del voluntario
-            int nivel = puntaje / totalRankings;
+            Double nivel = (puntaje + puntaje_2 + puntaje_3);
 
             // Se crea el ranking
             insertarRanking(nivel, tarea.getNombre(), voluntario.getNombre(), voluntario.getNumeroDocumento(),
                     tarea.getId(), voluntario.getId());
+        }
+    }
+
+
+    public void modificarRankingVoluntario(String idVoluntario) {
+
+        // Se buscan todas las tareas
+        List<TareaEntity> tareas = tareaService.listaTarea();
+
+        // Se busca el voluntario
+        VoluntarioEntity voluntario = voluntarioService.buscarVoluntarioPorId(idVoluntario);
+
+        // Se busca la voluntariohabilidad
+        List<VoluntarioHabilidadEntity> voluntarioHabilidades = voluntarioHabilidadService.listaVoluntarioHabilidad();
+
+        // Se busca la emergenciahabilidad
+        List<EmergenciaHabilidadEntity> emergenciaHabilidades = emergenciaHabilidadSevice.listaEmergenciaHabilidad();
+
+
+        // Se bucan todos los rankings
+        List<RankingEntity> rankings = listaRanking();
+        // Total de rankings
+        /*
+        int totalRankings = rankings.size();
+
+        if (totalRankings == 0){
+            totalRankings = 1;
+        }
+         */
+
+        // Si no hay tareas, no se crea el ranking
+        if (tareas.isEmpty()) {
+            return;
+        }
+
+        // Se recorren todas las tareas
+        for (TareaEntity tarea : tareas) {
+            Double puntaje = 0.0;
+            Double puntaje_2 = 0.0;
+            Double puntaje_3 = 0.0;
+            // Por cada una de las tareas se crea un ranking según la distancia entre el
+            // voluntario y la tarea
+            double distancia = GeoUtils.calcularDistancia(voluntario.getZonaVivienda(), tarea.getZona());
+            System.out.println("Distancia: " + distancia);
+            // Si la distancia es menor o igual a 20 km el ranking al puntaje se le suma 2
+            if (distancia >= 0.0 && distancia <= 15000.0) {
+                puntaje += 3;
+            } else if (distancia > 15000.0 && distancia <= 40000.0) {
+                puntaje += 2;
+            } else if (distancia > 40000.0 && distancia <= 60000.0) {
+                puntaje += 1;
+            }
+            // Se le agrega el peso elegido por todos
+            puntaje *= 0.6;
+
+            // Si el voluntario tiene el equipamiento necesario para la tarea, al puntaje se
+            // le suma 2
+
+            String equipo = voluntario.getEquipamiento();
+            String[] elementos = equipo.split(",");
+            String equipamientoTarea = tarea.getRequerimientos();
+            String[] elementosTarea = equipamientoTarea.split(",");
+            for (String elemento : elementos) {
+                for (String elementoTarea : elementosTarea) {
+                    System.out.println(elemento + "         " + elementoTarea);
+                    if (elemento.contains(elementoTarea)) {
+                        System.out.println(puntaje_2);
+                        puntaje_2 += 1;
+                    }
+                }
+            }
+            // Se le agrega el peso elegido por todos
+            puntaje_2 *= 0.1;
+
+            String id = voluntario.getId();
+            for (VoluntarioHabilidadEntity voluntarioHabilidad : voluntarioHabilidades){
+                String idvoluntario = voluntarioHabilidad.getVoluntario();
+                if (Objects.equals(id, idvoluntario)){
+                    Long idhabilidad = voluntarioHabilidad.getHabilidad().getId();
+                    for (EmergenciaHabilidadEntity emergenciaHabilidad : emergenciaHabilidades){
+                        Long idhabilidadcomparar = emergenciaHabilidad.getHabilidad().getId();
+                        if (Objects.equals(idhabilidad, idhabilidadcomparar)){
+                            Long idemergencia = emergenciaHabilidad.getEmergencia().getId();
+                            Long idemergenciacompara = tarea.getEmergencia();
+                            if (Objects.equals(idemergencia, idemergenciacompara)){
+                                puntaje_3 += 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            // Se le agrega el peso elegido por todos
+            puntaje_3 *= 0.3;
+
+            // Se calcula el nivel del voluntario
+            Double nivel = (puntaje + puntaje_2 + puntaje_3) ;
+
+            String idtarea = tarea.getId();
+            for (RankingEntity ranking : rankings){
+                String idvoluntariocomprar = ranking.getVoluntario();
+                String idtareacomparar = ranking.getTarea();
+                if (Objects.equals(idvoluntariocomprar, idVoluntario) && Objects.equals(idtareacomparar, idtarea)){
+                    ranking.setNivel(nivel);
+
+                    // Guardar los cambios
+                    rankingRepository.save(ranking);
+                }
+            }
         }
     }
 

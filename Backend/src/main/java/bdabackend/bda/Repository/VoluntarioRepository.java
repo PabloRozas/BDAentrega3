@@ -7,4 +7,5 @@ import bdabackend.bda.Entity.VoluntarioEntity;
 @Repository
 public interface VoluntarioRepository extends MongoRepository<VoluntarioEntity, String> {
         VoluntarioEntity findByCorreo(String correo);
+
 }
