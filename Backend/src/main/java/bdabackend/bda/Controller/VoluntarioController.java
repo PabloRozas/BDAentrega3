@@ -6,15 +6,11 @@ import bdabackend.bda.Service.RankingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
 import bdabackend.bda.Entity.LoginRequest;
 import bdabackend.bda.Entity.VoluntarioEntity;
 import bdabackend.bda.Service.AuthService;
 import bdabackend.bda.Service.VoluntarioService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import bdabackend.bda.Entity.AuthenticationResponse;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +32,9 @@ public class VoluntarioController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
+
 
     // CREAR
     /**
@@ -141,6 +140,12 @@ public class VoluntarioController {
     public List<TareaEntity> getTareasByVoluntarioId(@RequestBody Map<String, String> body) {
         String id = body.get("id");
         return voluntarioService.getTareasConVoluntarios(id);
+    }
+
+    @GetMapping("/VoluntariosPorTarea/{tareaId}")
+    public ResponseEntity<List<VoluntarioEntity>> getVoluntariosByTarea(@PathVariable String tareaId) {
+        List<VoluntarioEntity> voluntarios = voluntarioService.getVoluntariosByTarea(tareaId);
+        return ResponseEntity.ok(voluntarios);
     }
 
 }

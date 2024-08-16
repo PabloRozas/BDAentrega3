@@ -1,5 +1,6 @@
 package bdabackend.bda.Service;
 
+import bdabackend.bda.Entity.RankingEntity;
 import bdabackend.bda.Entity.TareaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,7 +14,18 @@ import org.springframework.stereotype.Service;
 import bdabackend.bda.Entity.VoluntarioEntity;
 import bdabackend.bda.Repository.VoluntarioRepository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+ 
+
 import java.util.List;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import com.mongodb.client.AggregateIterable;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import com.mongodb.client.MongoCollection;
 
 
 
@@ -24,6 +36,9 @@ public class VoluntarioService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private MongoCollection<Document> tareaCollection;
 
     // CREAR
 
@@ -172,5 +187,143 @@ public class VoluntarioService {
     // contrasenaVoluntario,
     // equipamientoVoluntario);
     // }
+
+      // Buscar voluntarios por tarea con agreggate y lookup
+
+    /**
+     * Obtiene todos los voluntarios registrados en una tarea específica.
+     *
+     * @param tareaId El ID de la tarea.
+     * @return Lista de voluntarios registrados en la tarea.
+     */
+
+     public List<VoluntarioEntity> getVoluntariosByTarea(String tareaId) {
+        List<VoluntarioEntity> voluntarios = new ArrayList<>();
+
+        // Convertir tareaId a ObjectId
+        ObjectId tareaObjectId = new ObjectId(tareaId);
+
+        // Crear pipeline de agregación
+
+        // 1. $match
+        List<Document> matchStage = Arrays.asList(
+            new Document("$match", new Document("_id", tareaObjectId))  // Buscar la tarea por _id
+        );
+
+        // 2. $addFields para convertir _id a String
+        List<Document> addFieldsStage = Arrays.asList(
+            new Document("$addFields", new Document("idTareaStr", new Document("$toString", "$_id")))
+        );
+
+        // 3. $lookup en ranking usando idTareaStr
+        List<Document> lookupRankingStage = Arrays.asList(
+            new Document("$lookup", new Document()
+                .append("from", "ranking")  // Unir con la colección ranking
+                .append("localField", "idTareaStr")  // Campo convertido en la colección de tareas
+                .append("foreignField", "idTarea")  // Campo en la colección de rankings
+                .append("as", "rankingDetalles"))
+        );
+
+        // 4. $addFields para convertir idVoluntario a ObjectId dentro del array
+        List<Document> addFieldsVoluntarioStage = Arrays.asList(
+            new Document("$addFields", new Document("rankingDetalles", 
+                new Document("$map", new Document()
+                    .append("input", "$rankingDetalles")
+                    .append("as", "ranking")
+                    .append("in", new Document()
+                        .append("idVoluntarioObj", new Document("$toObjectId", "$$ranking.idVoluntario"))
+                        .append("idTarea", "$$ranking.idTarea")
+                        .append("nivel", "$$ranking.nivel")
+                        .append("nombreTarea", "$$ranking.nombreTarea")
+                        .append("nombreVoluntario", "$$ranking.nombreVoluntario")
+                        .append("numeroDocumentoVoluntario", "$$ranking.numeroDocumentoVoluntario")
+                    ))
+            ))
+        );
+
+        // 5. $lookup en voluntario usando el array de idVoluntarioObj
+        List<Document> lookupVoluntarioStage = Arrays.asList(
+            new Document("$lookup", new Document()
+                .append("from", "voluntario")  // Unir con la colección voluntario
+                .append("localField", "rankingDetalles.idVoluntarioObj")  // Campo idVoluntarioObj en ranking
+                .append("foreignField", "_id")  // Campo id en la colección de voluntarios
+                .append("as", "voluntarioDetalles"))
+        );
+
+        // 6. Mantener los arrays y procesarlos en Java
+        AggregateIterable<Document> results = tareaCollection.aggregate(Arrays.asList(
+            matchStage.get(0),
+            addFieldsStage.get(0),
+            lookupRankingStage.get(0),
+            addFieldsVoluntarioStage.get(0),
+            lookupVoluntarioStage.get(0)
+        ));
+
+        // Mapear los resultados a una lista de voluntarios
+        for (Document doc : results) {
+            List<Document> voluntarioDetalles = doc.getList("voluntarioDetalles", Document.class);
+            for (Document voluntarioDoc : voluntarioDetalles) {
+                VoluntarioEntity voluntario = convertDocumentToVoluntario(voluntarioDoc);
+                voluntarios.add(voluntario);
+            }
+        }
+
+        return voluntarios;
+    }
+
+    private void printStageResult(String message, List<Document>... stages) {
+        List<Document> pipeline = new ArrayList<>();
+        for (List<Document> stage : stages) {
+            pipeline.addAll(stage);
+        }
+        AggregateIterable<Document> results = tareaCollection.aggregate(pipeline);
+        
+        System.out.println(message);
+        boolean hasResults = false;
+        for (Document doc : results) {
+            hasResults = true;
+            System.out.println(doc.toJson());
+        }
+        if (!hasResults) {
+            System.out.println("No se encontraron resultados para la consulta.");
+        }
+    }
+
+    private VoluntarioEntity convertDocumentToVoluntario(Document doc) {
+        VoluntarioEntity voluntario = new VoluntarioEntity();
+    
+        // Manejo del campo _id
+        Object id = doc.get("_id");
+        if (id instanceof ObjectId) {
+            voluntario.setId(((ObjectId) id).toString());
+        } else if (id instanceof String) {
+            voluntario.setId((String) id);
+        }
+    
+        // Asignar otros campos
+        voluntario.setNombre(doc.getString("nombre"));
+        voluntario.setCorreo(doc.getString("correo"));
+        voluntario.setNumeroDocumento(doc.getString("numeroDocumento"));
+    
+        // Convertir el campo "zonaVivienda" a GeoJsonPoint
+        Document zonaViviendaDoc = (Document) doc.get("zonaVivienda");
+        if (zonaViviendaDoc != null) {
+            double[] coordinates = zonaViviendaDoc.getList("coordinates", Double.class).stream().mapToDouble(Double::doubleValue).toArray();
+            GeoJsonPoint zonaVivienda = new GeoJsonPoint(coordinates[0], coordinates[1]);
+            voluntario.setZonaVivienda(zonaVivienda);
+        }
+    
+        voluntario.setContrasena(doc.getString("contrasena"));
+        voluntario.setEquipamiento(doc.getString("equipamiento"));
+        voluntario.setRanking(null); // Para implementar
+        voluntario.setVoluntarioHabilidad(null); // Para implementar
+    
+        return voluntario;
+    }
+
+
+
+
+    
 
 }
