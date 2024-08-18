@@ -39,4 +39,16 @@ public interface RankingRepository extends MongoRepository<RankingEntity, String
         @Query(value = "{'id': ?0}", delete = true)
         void deleteByid(String id);
 
+        // FindByIdTarea
+
+        /**
+         * Obtiene el ranking de una tarea
+         * 
+         * @param idTarea id de la tarea
+         * @return ranking de la tarea
+         */
+
+         List<RankingEntity> findByidTarea(String idTarea);
+
+
 }

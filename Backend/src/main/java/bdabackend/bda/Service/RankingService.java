@@ -1,6 +1,8 @@
 package bdabackend.bda.Service;
 
 import bdabackend.bda.Entity.*;
+
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import bdabackend.bda.Repository.RankingRepository;
@@ -9,6 +11,7 @@ import bdabackend.bda.Utils.GeoUtils;
 import java.io.UnsupportedEncodingException;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Service
@@ -39,13 +42,14 @@ public class RankingService {
      * @param numeroDocumentoVoluntario El número de documento del voluntario.
      * @param idTarea                   El id de la tarea.
      * @param idVoluntario              El id del voluntario.
+     * @param asignado                  Si la tarea está asignada o no.
      * 
      */
     public void insertarRanking(Double nivel, String tareaRanking, String nombreVoluntario,
             String numeroDocumentoVoluntario, String idTarea, String idVoluntario) {
 
         RankingEntity ranking = new RankingEntity(nivel, tareaRanking, nombreVoluntario, numeroDocumentoVoluntario,
-                idTarea, idVoluntario);
+                idTarea, idVoluntario, false );
         rankingRepository.insert(ranking);
     }
 
@@ -369,8 +373,11 @@ public class RankingService {
      * @return Una lista con todos los rankings registrados en la base de datos.
      */
     public List<RankingEntity> listaRanking() {
+
         return rankingRepository.findAll();
     }
+
+    //lista con todos 
 
     /**
      * Busca un ranking en la base de datos por su id.
@@ -480,4 +487,51 @@ public class RankingService {
     // }
     // return contador;
     // }
+
+    //Obtiene los rankings de una tarea 
+    public List<RankingEntity> obtenerRankingTarea(String idTarea) {
+
+    
+        //crear lista de rankings vacía
+        List<RankingEntity> rankings = new ArrayList<RankingEntity>();
+
+        System.out.println("lista de rankings vacía");
+
+        List<RankingEntity> rankingsOriginal = rankingRepository.findAll();
+
+        System.out.println("lista de rankings original" + rankingsOriginal);
+
+        //buscar en rankingsOriginal los que tengan idTarea igual a objectId
+        for (RankingEntity ranking : rankingsOriginal) {
+            if (ranking.getTarea().equals(idTarea)) {
+                rankings.add(ranking);
+            }
+        }
+        System.out.println("lista de rankings" + rankings);
+        return rankings;
+    }
+
+    //Ordena los rankings de una tarea en específico según nivel, de mayor a menor
+    
+    public List<RankingEntity> ordenarRankingTarea(String idTarea) {
+        List<RankingEntity> rankings = rankingRepository.findByidTarea(idTarea);
+        rankings.sort((ranking1, ranking2) -> ranking2.getNivel().compareTo(ranking1.getNivel()));
+        return rankings;
+    }
+
+    //Aceptar tarea
+    public void aceptarTarea(String idVoluntario, String idTarea) {
+        List<RankingEntity> rankings = rankingRepository.findAll();
+        for (RankingEntity ranking : rankings) {
+            if (ranking.getVoluntario().equals(idVoluntario) && ranking.getTarea().equals(idTarea)) {
+                ranking.setTareaAceptada(true);
+                rankingRepository.save(ranking);
+            }
+        }
+    }
+
+
+  
+
+
 }

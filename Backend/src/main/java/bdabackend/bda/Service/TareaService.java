@@ -14,6 +14,8 @@ import bdabackend.bda.Repository.RegionRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class TareaService {
@@ -27,8 +29,8 @@ public class TareaService {
 
     // Guardar una nueva tarea o actualizar una existente
     public TareaEntity insertarTarea(String nombreTarea, String descripcionTarea, String tipoTarea, Point zona,
-            Long emergencia, String requerimientos) {
-        TareaEntity tarea = new TareaEntity(nombreTarea, descripcionTarea, tipoTarea, zona, emergencia, requerimientos);
+            Long emergencia, String requerimientos, int cantidadVoluntarios, LocalDate fecha, LocalDateTime hora) {
+        TareaEntity tarea = new TareaEntity(nombreTarea, descripcionTarea, tipoTarea, zona, emergencia, requerimientos, cantidadVoluntarios, fecha, hora);
         logger.info("Guardando tarea: {}", tarea);
         return mongoTareaRepository.save(tarea);
     }
@@ -67,4 +69,15 @@ public class TareaService {
 
         return tareas;
     }
+
+
+
+
+    
+
+
+
+    
+
+
 }

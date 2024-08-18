@@ -13,7 +13,7 @@ public class MongoConfig {
 
     @Bean
     public MongoCollection<Document> tareaCollection() {
-        MongoDatabase database = MongoClients.create("mongodb://localhost:27017").getDatabase("lab3BDAbase2");
+        MongoDatabase database = MongoClients.create("mongodb://localhost:27017").getDatabase("lab3");
         return database.getCollection("Tarea");
     }
 

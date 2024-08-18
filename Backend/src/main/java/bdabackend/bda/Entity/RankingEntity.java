@@ -3,6 +3,8 @@ package bdabackend.bda.Entity;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 
+
+
 @Document(collection = "ranking")
 public class RankingEntity {
     @Id
@@ -20,18 +22,21 @@ public class RankingEntity {
 
     private String idVoluntario;
 
+    private boolean tareaAceptada;
+
     // Constructor
     public RankingEntity() {
     }
 
     public RankingEntity(Double nivel, String nombreTarea, String nombreVoluntario, String numeroDocumentoVoluntario,
-            String idTarea, String idVoluntario) {
+            String idTarea, String idVoluntario, boolean tareaAceptada) {
         this.nivel = nivel;
         this.nombreTarea = nombreTarea;
         this.nombreVoluntario = nombreVoluntario;
         this.numeroDocumentoVoluntario = numeroDocumentoVoluntario;
         this.idTarea = idTarea;
         this.idVoluntario = idVoluntario;
+        this.tareaAceptada = tareaAceptada;
     }
 
     // Getters and Setters
@@ -85,5 +90,13 @@ public class RankingEntity {
 
     public void setVoluntario(String voluntarioId) {
         this.idVoluntario = voluntarioId;
+    }
+
+    public boolean getTareaAceptada() {
+        return this.tareaAceptada;
+    }
+
+    public void setTareaAceptada(boolean tareaAceptada) {
+        this.tareaAceptada = tareaAceptada;
     }
 }

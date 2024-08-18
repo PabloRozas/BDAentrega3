@@ -203,17 +203,24 @@ public class VoluntarioService {
         // Convertir tareaId a ObjectId
         ObjectId tareaObjectId = new ObjectId(tareaId);
 
+
+
+
         // Crear pipeline de agregación
 
         // 1. $match
         List<Document> matchStage = Arrays.asList(
             new Document("$match", new Document("_id", tareaObjectId))  // Buscar la tarea por _id
         );
+        printStageResult("Resultados después de $match:", matchStage);
 
-        // 2. $addFields para convertir _id a String
+        // 2. $addFields para convertir _id a String y mantener cantidadVoluntarios
         List<Document> addFieldsStage = Arrays.asList(
-            new Document("$addFields", new Document("idTareaStr", new Document("$toString", "$_id")))
+            new Document("$addFields", new Document()
+                .append("idTareaStr", new Document("$toString", "$_id"))
+                .append("cantidadVoluntarios", "$cantidadVoluntarios"))
         );
+        printStageResult("Resultados después de $addFields (convertir _id a String y agregar cantidadVoluntarios):", matchStage, addFieldsStage);
 
         // 3. $lookup en ranking usando idTareaStr
         List<Document> lookupRankingStage = Arrays.asList(
@@ -223,8 +230,20 @@ public class VoluntarioService {
                 .append("foreignField", "idTarea")  // Campo en la colección de rankings
                 .append("as", "rankingDetalles"))
         );
+        printStageResult("Resultados después de $lookup en ranking:", matchStage, addFieldsStage, lookupRankingStage);
 
-        // 4. $addFields para convertir idVoluntario a ObjectId dentro del array
+        // 4. $sort para ordenar los rankings por nivel dentro del array rankingDetalles
+        List<Document> sortRankingStage = Arrays.asList(
+            new Document("$addFields", new Document("rankingDetalles", 
+                new Document("$sortArray", new Document()
+                    .append("input", "$rankingDetalles")
+                    .append("sortBy", new Document("nivel", -1))  // Ordenar por 'nivel' en orden descendente
+                )
+            ))
+        );
+        printStageResult("Resultados después de $sort en rankingDetalles:", matchStage, addFieldsStage, lookupRankingStage, sortRankingStage);
+
+        // 5. $addFields para convertir idVoluntario a ObjectId dentro del array
         List<Document> addFieldsVoluntarioStage = Arrays.asList(
             new Document("$addFields", new Document("rankingDetalles", 
                 new Document("$map", new Document()
@@ -240,8 +259,9 @@ public class VoluntarioService {
                     ))
             ))
         );
+        printStageResult("Resultados después de $addFields (convertir idVoluntario a ObjectId):", matchStage, addFieldsStage, lookupRankingStage, sortRankingStage, addFieldsVoluntarioStage);
 
-        // 5. $lookup en voluntario usando el array de idVoluntarioObj
+        // 6. $lookup en voluntario usando el array de idVoluntarioObj
         List<Document> lookupVoluntarioStage = Arrays.asList(
             new Document("$lookup", new Document()
                 .append("from", "voluntario")  // Unir con la colección voluntario
@@ -249,27 +269,51 @@ public class VoluntarioService {
                 .append("foreignField", "_id")  // Campo id en la colección de voluntarios
                 .append("as", "voluntarioDetalles"))
         );
+        printStageResult("Resultados después de $lookup en voluntario:", matchStage, addFieldsStage, lookupRankingStage, sortRankingStage, addFieldsVoluntarioStage, lookupVoluntarioStage);
 
-        // 6. Mantener los arrays y procesarlos en Java
+        // 7. $addFields para limitar el número de voluntarios devueltos
+        List<Document> limitVoluntariosStage = Arrays.asList(
+            new Document("$addFields", new Document("voluntarioDetalles", 
+                new Document("$slice", Arrays.asList("$voluntarioDetalles", "$cantidadVoluntarios"))
+            ))
+        );
+        printStageResult("Resultados después de $addFields (limitar número de voluntarios devueltos):", matchStage, addFieldsStage, lookupRankingStage, sortRankingStage, addFieldsVoluntarioStage, lookupVoluntarioStage, limitVoluntariosStage);
+
+        // Ejecutar la agregación completa
         AggregateIterable<Document> results = tareaCollection.aggregate(Arrays.asList(
             matchStage.get(0),
             addFieldsStage.get(0),
             lookupRankingStage.get(0),
+            sortRankingStage.get(0),
             addFieldsVoluntarioStage.get(0),
-            lookupVoluntarioStage.get(0)
+            lookupVoluntarioStage.get(0),
+            limitVoluntariosStage.get(0)
         ));
 
         // Mapear los resultados a una lista de voluntarios
         for (Document doc : results) {
+            System.out.println("Documento final después de toda la agregación: " + doc.toJson());
             List<Document> voluntarioDetalles = doc.getList("voluntarioDetalles", Document.class);
             for (Document voluntarioDoc : voluntarioDetalles) {
-                VoluntarioEntity voluntario = convertDocumentToVoluntario(voluntarioDoc);
+                VoluntarioEntity voluntario= convertDocumentToVoluntario(voluntarioDoc);
                 voluntarios.add(voluntario);
             }
+
+          
         }
 
         return voluntarios;
     }
+
+       
+
+
+
+
+
+
+
+
 
     private void printStageResult(String message, List<Document>... stages) {
         List<Document> pipeline = new ArrayList<>();
@@ -291,7 +335,7 @@ public class VoluntarioService {
 
     private VoluntarioEntity convertDocumentToVoluntario(Document doc) {
         VoluntarioEntity voluntario = new VoluntarioEntity();
-    
+
         // Manejo del campo _id
         Object id = doc.get("_id");
         if (id instanceof ObjectId) {
@@ -299,12 +343,12 @@ public class VoluntarioService {
         } else if (id instanceof String) {
             voluntario.setId((String) id);
         }
-    
+
         // Asignar otros campos
         voluntario.setNombre(doc.getString("nombre"));
         voluntario.setCorreo(doc.getString("correo"));
         voluntario.setNumeroDocumento(doc.getString("numeroDocumento"));
-    
+
         // Convertir el campo "zonaVivienda" a GeoJsonPoint
         Document zonaViviendaDoc = (Document) doc.get("zonaVivienda");
         if (zonaViviendaDoc != null) {
@@ -312,14 +356,15 @@ public class VoluntarioService {
             GeoJsonPoint zonaVivienda = new GeoJsonPoint(coordinates[0], coordinates[1]);
             voluntario.setZonaVivienda(zonaVivienda);
         }
-    
+
         voluntario.setContrasena(doc.getString("contrasena"));
         voluntario.setEquipamiento(doc.getString("equipamiento"));
         voluntario.setRanking(null); // Para implementar
         voluntario.setVoluntarioHabilidad(null); // Para implementar
-    
+
         return voluntario;
     }
+
 
 
 

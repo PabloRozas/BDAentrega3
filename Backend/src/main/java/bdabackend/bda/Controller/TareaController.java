@@ -5,12 +5,15 @@ import bdabackend.bda.Service.TareaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.geo.Point;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/tarea")
@@ -54,9 +57,12 @@ public class TareaController {
             Double latitud = Double.parseDouble(body.get("latitud"));
             Double longitud = Double.parseDouble(body.get("longitud"));
             Point zona = new Point(longitud, latitud);
+            int cantidadVoluntarios = Integer.parseInt(body.get("cantidadVoluntarios"));
+            LocalDate fecha = LocalDate.parse(body.get("fecha"));
+            LocalDateTime hora = LocalDateTime.parse(body.get("hora"));
 
-            TareaEntity nuevaTarea = mongoTareaService.insertarTarea(nombreTarea, descripcionTarea, tipoTarea, zona,
-                    emergencia, requerimiento);
+            TareaEntity nuevaTarea = mongoTareaService.insertarTarea(nombreTarea, descripcionTarea, tipoTarea, zona, 
+                    emergencia, requerimiento, cantidadVoluntarios, fecha, hora);
             logger.info("Tarea agregada exitosamente: {}", nuevaTarea);
             return ResponseEntity.ok(nuevaTarea);
         } catch (Exception e) {
