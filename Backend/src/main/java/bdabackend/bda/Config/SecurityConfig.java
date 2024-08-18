@@ -45,6 +45,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST, "/coordinador/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/gateway/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/gateway/**").permitAll()
+                            .requestMatchers("/websocket/**").authenticated() // Protege el endpoint WebSocket
                             .anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
