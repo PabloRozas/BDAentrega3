@@ -1,12 +1,15 @@
 package bdabackend.bda.Controller;
 
+import bdabackend.bda.Entity.RankingEntity;
 import bdabackend.bda.Entity.TareaEntity;
+import bdabackend.bda.Service.RankingService;
 import bdabackend.bda.Service.TareaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.aggregation.DocumentOperators.Rank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +25,13 @@ public class TareaController {
 
     @Autowired
     private TareaService mongoTareaService;
+
+    @Autowired
+    RankingService rankingService;
+
+    @Autowired
+    private TareaService tareaService;
+
 
     @GetMapping("/{id}")
     public ResponseEntity<TareaEntity> getTareaById(@PathVariable String id) {
@@ -64,6 +74,25 @@ public class TareaController {
             TareaEntity nuevaTarea = mongoTareaService.insertarTarea(nombreTarea, descripcionTarea, tipoTarea, zona, 
                     emergencia, requerimiento, cantidadVoluntarios, fecha, hora);
             logger.info("Tarea agregada exitosamente: {}", nuevaTarea);
+
+            rankingService.crearRankingTarea(nuevaTarea.getId());
+            rankingService.ordenarRankingTarea(nuevaTarea.getId());
+            List<RankingEntity> rankings = rankingService.obtenerCandidatos(nuevaTarea.getId());
+            List<String> idVoluntarios = rankingService.obtenerIdVoluntarios(rankings);
+            rankingService.mensajeTareaCreada(idVoluntarios, nuevaTarea.getNombre());
+            //llamar a un metodo de tareaService que obtenga los voluntarios aceptados
+            List<String> idVoluntariosAceptados = tareaService.getVoluntariosCompletamenteAceptados();
+            for (String idVoluntario : idVoluntariosAceptados) {
+                rankingService.actualizarTareaAsignada(idVoluntario, nuevaTarea.getId());
+            }
+
+            
+
+
+
+
+
+
             return ResponseEntity.ok(nuevaTarea);
         } catch (Exception e) {
             logger.error("Error al agregar la tarea: ", e);

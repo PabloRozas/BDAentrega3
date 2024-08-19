@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class RankingService {
@@ -30,6 +31,9 @@ public class RankingService {
 
     @Autowired
     private TareaService tareaService;
+
+    @Autowired
+    private MyWebSocketHandler myWebSocketHandler;
 
     // CREAR
 
@@ -513,7 +517,7 @@ public class RankingService {
 
     //Ordena los rankings de una tarea en específico según nivel, de mayor a menor
     
-    public List<RankingEntity> ordenarRankingTarea(String idTarea) {
+    public  List<RankingEntity> ordenarRankingTarea(String idTarea) {
         List<RankingEntity> rankings = rankingRepository.findByidTarea(idTarea);
         rankings.sort((ranking1, ranking2) -> ranking2.getNivel().compareTo(ranking1.getNivel()));
         return rankings;
@@ -531,6 +535,59 @@ public class RankingService {
     }
 
     // 
+    public List<RankingEntity> obtenerCandidatos(String idTarea) {
+        List<RankingEntity> rankings = ordenarRankingTarea(idTarea);
+        //crear lista vacía de rankings 
+        List<RankingEntity> rankingsCandidatos = new ArrayList<>();
+
+        //crear la tarea instancia
+        TareaEntity tarea = tareaService.buscarTareaPorId(idTarea);
+
+
+        int cantDeVoluntarios = tarea.getCantidadVoluntarios();
+
+        for (int i=0; i<cantDeVoluntarios; i++){
+            rankingsCandidatos.add(rankings.get(i));
+        }
+
+        return rankingsCandidatos;
+    }
+
+    //obtener id de voluntario de los rankings
+    //devuelve la lista de los id de voluntarios
+    public List<String> obtenerIdVoluntarios(List<RankingEntity> rankings) {
+        List<String> idVoluntarios = new ArrayList<>();
+        for (RankingEntity ranking : rankings) {
+            idVoluntarios.add(ranking.getVoluntario());
+        }
+        return idVoluntarios;
+    }
+
+    //enviar mensaje a los usuarios permitidos y programar bloqueo
+    public void mensajeTareaCreada(List<String> idVoluntarios, String nombreTarea) {
+        //enviar mensaje
+            // Crear el mensaje a enviar a los usuarios conectados
+        String mensajeOpciones = "{\"tipo\":\"notificacion\", \"mensaje\":\"Selecciona una opción para:  " + nombreTarea
+        + "\", \"opciones\":[\"Aceptar\", \"Rechazar\"]}";
+
+        myWebSocketHandler.enviarMensajeConOpcionesAUsuariosPermitidos(mensajeOpciones,idVoluntarios, 120); // Aquí puedes ajustar el tiempo de
+                                                                                   // bloqueo si es necesario
+
+    }
+
+    public void actualizarTareaAsignada(String idTarea, String idVoluntario) {
+        // Buscar el registro en el ranking donde idTarea e idVoluntario coincidan
+        Optional<RankingEntity> rankingOpt = rankingRepository.findByIdVoluntarioAndIdTarea(idTarea, idVoluntario);
+    
+        if (rankingOpt.isPresent()) {
+            RankingEntity ranking = rankingOpt.get();
+            ranking.setTareaAceptada(true);
+            rankingRepository.save(ranking); // Guardar el cambio en la base de datos
+            System.out.println("Tarea asignada actualizada a true para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
+        } else {
+            System.out.println("No se encontró el ranking para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
+        }
+    }
 
 
   
