@@ -48,6 +48,10 @@ public class RankingEntity {
         return this.nivel;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setNivel(Double nivel) {
         this.nivel = nivel;
     }
@@ -99,4 +103,6 @@ public class RankingEntity {
     public void setTareaAceptada(boolean tareaAceptada) {
         this.tareaAceptada = tareaAceptada;
     }
+
+
 }
