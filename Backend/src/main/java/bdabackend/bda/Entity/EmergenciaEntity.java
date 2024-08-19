@@ -4,6 +4,7 @@ import org.springframework.data.geo.Point;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 
@@ -33,6 +34,8 @@ public class EmergenciaEntity {
     private Integer cantidadVoluntariosMax;
 
     @OneToMany(mappedBy = "emergencia")
+    @JsonManagedReference
+    @JsonIgnore
     private Set<EmergenciaHabilidadEntity> emergenciaHabilidad = new HashSet<>();
 
     @ManyToOne
