@@ -18,11 +18,13 @@ import bdabackend.bda.Entity.VoluntarioEntity;
 import bdabackend.bda.Observer.VoluntarioAceptadoObserver;
 import bdabackend.bda.Repository.VoluntarioRepository;
 import bdabackend.bda.Utils.WebSocketSessionRegistry;
+import bdabackend.bda.Events.VoluntarioAceptadoEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.security.Key;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,6 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 
 @Service
 public class MyWebSocketHandler extends TextWebSocketHandler {
@@ -45,6 +50,9 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     @Autowired
     private VoluntarioRepository voluntarioRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     private final List<VoluntarioAceptadoObserver> observers = new ArrayList<>();
 
@@ -136,6 +144,10 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                     System.out.println("Voluntario " + voluntario);
                     if (voluntario != null) {
                         voluntariosAceptados.add(voluntario.getId());
+
+                        // Publicar el evento cuando un voluntario acepte
+                        VoluntarioAceptadoEvent event = new VoluntarioAceptadoEvent(this, idVoluntario);
+                        eventPublisher.publishEvent(event);
                     }
                     System.out.println("Voluntarios aceptados: " + voluntariosAceptados);
                     System.out.println("Voluntario " + voluntario.getId() + " ha aceptado la tarea.");

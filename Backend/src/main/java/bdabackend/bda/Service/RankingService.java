@@ -1,9 +1,12 @@
 package bdabackend.bda.Service;
 
 import bdabackend.bda.Entity.*;
+import bdabackend.bda.Events.VoluntarioAceptadoEvent;
+import bdabackend.bda.Observer.VoluntarioAceptadoObserver;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import bdabackend.bda.Repository.RankingRepository;
 import bdabackend.bda.Utils.GeoUtils;
@@ -16,28 +19,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class RankingService implements VoluntarioAceptadoObserver {
+public class RankingService {
 
-    @Override
-    public void onVoluntarioAceptado(String idVoluntario) {
-        System.out.println("Voluntario aceptado con ID: " + idVoluntario);
-        System.out.println("ESTAMOS EN RANKINGSERVICE CON LO DEL OBSERVER")
-
-         Optional<RankingEntity> rankingOpt = rankingRepository.findByIdVoluntarioAndIdTarea(idTarea, idVoluntario);
-
-        if (rankingOpt.isPresent()) {
-            RankingEntity ranking = rankingOpt.get();
-            ranking.setTareaAceptada(true);
-            rankingRepository.save(ranking); // Guardar el cambio en la base de datos
-            System.out.println(
-                    "Tarea asignada actualizada a true para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
-        } else {
-            System.out
-                    .println("No se encontró el ranking para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
-        }
-
-        // Aquí puedes agregar la lógica que debería ocurrir cuando un voluntario acepta
-    }
+   
 
     @Autowired
     private RankingRepository rankingRepository;
@@ -56,6 +40,14 @@ public class RankingService implements VoluntarioAceptadoObserver {
 
     @Autowired
     private MyWebSocketHandler myWebSocketHandler;
+
+    @EventListener
+    public void onVoluntarioAceptado(VoluntarioAceptadoEvent  event, String idTarea) {
+        String idVoluntario = event.getIdVoluntario();
+         // Actualizar la tarea asignada
+         actualizarTareaAsignada(idVoluntario, idTarea);
+        
+    }
 
     // CREAR
 
