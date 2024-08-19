@@ -225,21 +225,31 @@ export default {
         <h1 style="width: calc(100% - 20px); color: black; margin: 10px">
           Emergencias
         </h1>
-        <ul class="listaTareasRegiones">
-          <li
-            v-for="emergencia in emergencias"
-            :key="emergencia.id"
-            class="listaTareas"
-          >
-            <span>
-              <img
-                src="../../assets/images/sirena-encendida.svg"
-                alt="Sirena"
-              />
-            </span>
-            {{ emergencia.nombre }}
-          </li>
-        </ul>
+        <div
+          style="
+            width: calc(100% - 20px);
+            margin: 10px 0;
+            max-height: calc(100% - 60px);
+            overflow-y: auto;
+          "
+        >
+          <ul class="listaTareasRegiones">
+            <li
+              v-for="emergencia in emergencias"
+              :key="emergencia.id"
+              class="listaTareas"
+              style="padding-left: 20px"
+            >
+              <span>
+                <img
+                  src="../../assets/images/sirena-encendida.svg"
+                  alt="Sirena"
+                />
+              </span>
+              {{ emergencia.nombre }}
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="containerListTareasRegiones">
         <div v-if="!listTareas" class="containerTareasVacio">
