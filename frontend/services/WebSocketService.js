@@ -11,7 +11,8 @@ export default class WebSocketService {
   connect(callback) {
     this.stompClient.connect({}, frame => {
       this.stompClient.subscribe('/topic/notifications', message => {
-        callback(JSON.parse(message.body));
+        const parsedMessage = JSON.parse(message.body);
+        callback(parsedMessage);
       });
     });
   }

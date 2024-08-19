@@ -227,6 +227,22 @@ export default {
         console.error(error);
       }
     },
+    async getVoluntariosByTarea(idTarea) {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/ranking/voluntariosAceptados/${idTarea}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.auth.token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        this.voluntarios = response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 };
 </script>
@@ -274,7 +290,7 @@ export default {
           <p>Seleccione una región para ver las tareas</p>
         </div>
         <ul v-if="listTareas && tareas.length > 0" class="listaTareasRegiones">
-          <li v-for="tarea in tareas" :key="tarea.id" class="listaTareas">
+          <li v-for="tarea in tareas" :key="tarea.id" class="listaTareas" @click="getVoluntariosByTarea(tarea.id)">
             <span>
               <img src="../../assets/images/marcador.svg" alt="Marcador" />
             </span>
