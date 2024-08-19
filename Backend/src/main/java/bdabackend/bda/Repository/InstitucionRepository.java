@@ -22,7 +22,7 @@ public interface InstitucionRepository extends JpaRepository<InstitucionEntity, 
     public List<?> buscarInstitucionPorId(@Param("v") Long id);
 
     @Query(value = "SELECT * FROM institucion", nativeQuery = true)
-    public List<?> listaInstitucion();
+    public List<InstitucionEntity> listaInstitucion();
 
     // Delete
     @Transactional

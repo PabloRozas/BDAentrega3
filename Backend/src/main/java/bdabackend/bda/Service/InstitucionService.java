@@ -3,6 +3,8 @@ package bdabackend.bda.Service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import bdabackend.bda.Entity.InstitucionEntity;
 import bdabackend.bda.Repository.InstitucionRepository;
 
 @Service
@@ -22,7 +24,7 @@ public class InstitucionService {
         return institucionRepository.buscarInstitucionPorId(id);
     }
 
-    public List<?> listaInstitucion() {
+    public List<InstitucionEntity> listaInstitucion() {
         return institucionRepository.listaInstitucion();
     }
 }

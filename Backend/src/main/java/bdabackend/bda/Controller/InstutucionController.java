@@ -1,5 +1,6 @@
 package bdabackend.bda.Controller;
 
+import bdabackend.bda.Entity.InstitucionEntity;
 import bdabackend.bda.Service.AuditoriaService;
 import bdabackend.bda.Service.InstitucionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class InstutucionController {
     }
 
     @GetMapping("/all")
-    public List<?> getAllInstituciones() {
+    public List<InstitucionEntity> getAllInstituciones() {
         return institucionService.listaInstitucion();
     }
 
