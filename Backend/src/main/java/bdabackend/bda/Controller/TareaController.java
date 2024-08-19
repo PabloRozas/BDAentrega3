@@ -32,7 +32,6 @@ public class TareaController {
     @Autowired
     private TareaService tareaService;
 
-
     @GetMapping("/{id}")
     public ResponseEntity<TareaEntity> getTareaById(@PathVariable String id) {
         logger.info("Recibiendo solicitud para obtener tarea con id: {}", id);
@@ -59,9 +58,7 @@ public class TareaController {
             String descripcionTarea = body.get("descripcionTarea");
             String tipoTarea = body.get("tipoTarea");
 
-
             String requerimiento = body.get("equ");
-
 
             Long emergencia = Long.parseLong(body.get("emergencia"));
             Double latitud = Double.parseDouble(body.get("latitud"));
@@ -71,27 +68,29 @@ public class TareaController {
             LocalDate fecha = LocalDate.parse(body.get("fecha"));
             LocalDateTime hora = LocalDateTime.parse(body.get("hora"));
 
-            TareaEntity nuevaTarea = mongoTareaService.insertarTarea(nombreTarea, descripcionTarea, tipoTarea, zona, 
+            TareaEntity nuevaTarea = mongoTareaService.insertarTarea(nombreTarea, descripcionTarea, tipoTarea, zona,
                     emergencia, requerimiento, cantidadVoluntarios, fecha, hora);
             logger.info("Tarea agregada exitosamente: {}", nuevaTarea);
 
             rankingService.crearRankingTarea(nuevaTarea.getId());
             rankingService.ordenarRankingTarea(nuevaTarea.getId());
             List<RankingEntity> rankings = rankingService.obtenerCandidatos(nuevaTarea.getId());
+            System.out.println("rankings: " + rankings);
+
             List<String> idVoluntarios = rankingService.obtenerIdVoluntarios(rankings);
+            System.out.println("ahashdasjhdkajsgdjkhasgdk");
+
             rankingService.mensajeTareaCreada(idVoluntarios, nuevaTarea.getNombre());
-            //llamar a un metodo de tareaService que obtenga los voluntarios aceptados
+            // llamar a un metodo de tareaService que obtenga los voluntarios aceptados
+            System.out.println("idVoluntarios: " + idVoluntarios);
+
             List<String> idVoluntariosAceptados = tareaService.getVoluntariosCompletamenteAceptados();
+            System.out.println("idVoluntariosAceptados: " + idVoluntariosAceptados);
+
             for (String idVoluntario : idVoluntariosAceptados) {
+                System.out.println("Estamos dentro del for estamos super dentro del for");
                 rankingService.actualizarTareaAsignada(idVoluntario, nuevaTarea.getId());
             }
-
-            
-
-
-
-
-
 
             return ResponseEntity.ok(nuevaTarea);
         } catch (Exception e) {

@@ -14,8 +14,12 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import bdabackend.bda.Entity.VoluntarioEntity;
+import bdabackend.bda.Observer.VoluntarioAceptadoObserver;
+import bdabackend.bda.Repository.VoluntarioRepository;
 import bdabackend.bda.Utils.WebSocketSessionRegistry;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.stereotype.Service;
@@ -39,6 +43,11 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     @Value("${jwt.secret_key}")
     private String secretKey;
 
+    @Autowired
+    private VoluntarioRepository voluntarioRepository;
+
+    private final List<VoluntarioAceptadoObserver> observers = new ArrayList<>();
+
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -52,10 +61,15 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     private final Map<String, Boolean> canRespond = new ConcurrentHashMap<>(); // Para rastrear si un usuario aún puede
                                                                                // responder
 
-                                                                               // Lista para almacenar los IDs de los usuarios que aceptaron
+    // Lista para almacenar los IDs de los usuarios que aceptaron
     private final List<String> voluntariosAceptados = new ArrayList<>()
-    
+
     ;
+
+    public void registerObserver(VoluntarioAceptadoObserver observer) {
+        observers.add(observer);
+    }
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String token = getTokenFromUri(session.getUri().toString());
@@ -117,9 +131,18 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                 String idVoluntario = obtenerUserIdDesdeSesion(session);
 
                 if ("aceptar".equalsIgnoreCase(seleccion)) {
+                    VoluntarioEntity voluntario = voluntarioRepository.findByCorreo(idVoluntario);
                     // Agregar el ID del voluntario a la lista
-                    voluntariosAceptados.add(idVoluntario);
-                    System.out.println("Voluntario " + idVoluntario + " ha aceptado la tarea.");
+                    System.out.println("Voluntario " + voluntario);
+                    if (voluntario != null) {
+                        voluntariosAceptados.add(voluntario.getId());
+                    }
+                    System.out.println("Voluntarios aceptados: " + voluntariosAceptados);
+                    System.out.println("Voluntario " + voluntario.getId() + " ha aceptado la tarea.");
+                    // Notificar a los observadores
+                    for (VoluntarioAceptadoObserver observer : observers) {
+                        observer.onVoluntarioAceptado(idVoluntario);
+                    }
                 }
 
                 // Bloquear futuras respuestas de este usuario
@@ -132,6 +155,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     // Método para obtener la lista de voluntarios que aceptaron
     public List<String> getVoluntariosAceptados() {
+        System.out.println("Voluntarios aceptados 1: " + voluntariosAceptados);
         return new ArrayList<>(voluntariosAceptados); // Retornar una copia de la lista
     }
 
@@ -140,33 +164,31 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         return session.getAttributes().get("userId").toString();
     }
 
-
-        /*
-         * // Ejemplo: Enviar un mensaje a todos los usuarios activos
-         * scheduler.schedule(() -> {
-         * try {
-         * System.out.println("Enviando mensaje a usuarios activos...");
-         * session.sendMessage(new TextMessage("Hola, usuarios activos! (retrasado 5 )"
-         * ));
-         * }catch (Exception e) {
-         * e.printStackTrace();
-         * }
-         * 
-         * }, 5, TimeUnit.SECONDS);
-         * 
-         * //Enviar un segundo mensaje
-         * scheduler.schedule(() -> {
-         * try {
-         * System.out.println("Enviando mensaje a usuarios activos...");
-         * session.sendMessage(new TextMessage("Hola, usuarios activos! (retrasado 10)"
-         * ));
-         * }catch (Exception e) {
-         * e.printStackTrace();
-         * }
-         * 
-         * }, 10, TimeUnit.SECONDS);
-         */
-    
+    /*
+     * // Ejemplo: Enviar un mensaje a todos los usuarios activos
+     * scheduler.schedule(() -> {
+     * try {
+     * System.out.println("Enviando mensaje a usuarios activos...");
+     * session.sendMessage(new TextMessage("Hola, usuarios activos! (retrasado 5 )"
+     * ));
+     * }catch (Exception e) {
+     * e.printStackTrace();
+     * }
+     * 
+     * }, 5, TimeUnit.SECONDS);
+     * 
+     * //Enviar un segundo mensaje
+     * scheduler.schedule(() -> {
+     * try {
+     * System.out.println("Enviando mensaje a usuarios activos...");
+     * session.sendMessage(new TextMessage("Hola, usuarios activos! (retrasado 10)"
+     * ));
+     * }catch (Exception e) {
+     * e.printStackTrace();
+     * }
+     * 
+     * }, 10, TimeUnit.SECONDS);
+     */
 
     private String getTokenFromUri(String uri) {
         // Extraer el token de la URI
@@ -252,7 +274,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         }, delayInSeconds, TimeUnit.SECONDS);
     }
 
-    public void enviarMensajeConOpcionesYProgramarBloqueo( String mensaje, long delayInSeconds) {
+    public void enviarMensajeConOpcionesYProgramarBloqueo(String mensaje, long delayInSeconds) {
         activeSessions.forEach((id, session) -> {
             try {
                 canRespond.put(id, true); // Restablece la capacidad de responder
@@ -264,20 +286,21 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         });
     }
 
-    //MENSAJE PARA CUANDO SE CREA LA TAREA-----------------------
+    // MENSAJE PARA CUANDO SE CREA LA TAREA-----------------------
 
-
-    public void enviarMensajeConOpcionesAUsuariosPermitidos(String mensaje, List<String> listaUsuariosPermitidos, long delayInSeconds) {
+    public void enviarMensajeConOpcionesAUsuariosPermitidos(String mensaje, List<String> listaUsuariosPermitidos,
+            long delayInSeconds) {
         activeSessions.forEach((id, session) -> {
-            // Suponiendo que tienes un método para obtener el identificador del usuario desde la sesión
-            String userId = obtenerUserIdDesdeSesion(session); 
-    
+            // Suponiendo que tienes un método para obtener el identificador del usuario
+            // desde la sesión
+            String userId = obtenerUserIdDesdeSesion(session);
+
             // Verificar si el usuario está en la lista de usuarios permitidos
             if (listaUsuariosPermitidos.contains(userId)) {
                 try {
                     // Restablecer el estado de respuesta a `true` para las sesiones permitidas
                     canRespond.put(id, true);
-    
+
                     // Enviar el mensaje de opciones a cada usuario conectado que esté en la lista
                     session.sendMessage(new TextMessage(mensaje));
                 } catch (Exception e) {
@@ -285,15 +308,17 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                 }
             }
         });
-    
-        // Programar el bloqueo de respuestas y envío de respuesta predeterminada para los usuarios permitidos
+
+        // Programar el bloqueo de respuestas y envío de respuesta predeterminada para
+        // los usuarios permitidos
         scheduler.schedule(() -> {
             activeSessions.forEach((id, session) -> {
                 String userId = obtenerUserIdDesdeSesion(session);
-                if (listaUsuariosPermitidos.contains(userId) && canRespond.getOrDefault(id, false)) { 
+                if (listaUsuariosPermitidos.contains(userId) && canRespond.getOrDefault(id, false)) {
                     canRespond.put(id, false); // Bloquea la capacidad de responder
                     try {
-                        session.sendMessage(new TextMessage("No respondiste a tiempo, seleccionando Opción por defecto."));
+                        session.sendMessage(
+                                new TextMessage("No respondiste a tiempo, seleccionando Opción por defecto."));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -301,13 +326,5 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             });
         }, delayInSeconds, TimeUnit.SECONDS);
     }
-    
-  
-
-
-    
-
-
-    
 
 }

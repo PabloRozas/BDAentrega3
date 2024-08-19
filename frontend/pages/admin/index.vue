@@ -11,32 +11,45 @@ export default {
       markers: [],
       opcionMenuNav: 0,
       listTareas: false,
+      emergencias: [
+        { id: 1, nombre: "Incendio" },
+        { id: 2, nombre: "Inundación" },
+        { id: 3, nombre: "Terremoto" },
+        { id: 4, nombre: "Tsunami" },
+        { id: 5, nombre: "Erupción volcánica" },
+        { id: 6, nombre: "Deslizamiento" },
+        { id: 7, nombre: "Tormenta" },
+        { id: 8, nombre: "Tornado" },
+        { id: 9, nombre: "Huracán" },
+        { id: 10, nombre: "Ciclón" },
+        { id: 11, nombre: "Tifón" },
+        { id: 12, nombre: "Ola de calor" },
+        { id: 13, nombre: "Ola de frío" },
+        { id: 14, nombre: "Ola de viento" },
+        { id: 15, nombre: "Ola de nieve" },
+        { id: 16, nombre: "Ola de lluvia" },
+        { id: 17, nombre: "Ola de granizo" },
+        { id: 18, nombre: "Ola de rayos" },
+        { id: 19, nombre: "Ola de viento" },
+        { id: 20, nombre: "Ola de nieve" },
+        { id: 21, nombre: "Ola de lluvia" },
+        { id: 22, nombre: "Ola de granizo" },
+        { id: 23, nombre: "Ola de rayos" },
+        { id: 24, nombre: "Ola de viento" },
+        { id: 25, nombre: "Ola de nieve" },
+        { id: 26, nombre: "Ola de lluvia" },
+        { id: 27, nombre: "Ola de granizo" },
+        { id: 28, nombre: "Ola de rayos" },
+        { id: 29, nombre: "Ola de viento" },
+        { id: 30, nombre: "Ola de nieve" },
+      ],
     };
   },
   mounted() {
     this.auth = useAuthStore();
     this.initMap();
-    this.getInstituciones();
   },
   methods: {
-    async getInstituciones() {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/institucion/all`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.auth.token}`,
-            },
-          }
-        );
-        console.log(response.data);
-        this.instituciones = response.data;
-        console.log(this.instituciones);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
     initMap() {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDd1yMKvX4PyaxaVtyauISsGrMvxYi6CgQ&libraries=places`;
@@ -207,8 +220,27 @@ export default {
       <div id="map" style="height: 100%; width: 100%"></div>
     </section>
     <section class="section2">
-      <!-- TODO: en la segunda fila debe ir la leyenda del mapa con los puntos y su significado, debe cambiar a la lista de las emergencias cuando se seleccione en el mapa -->
-      <!-- lista de las tareas -->
+      <!-- lista de las emergencias -->
+      <div class="containerListTareasRegiones">
+        <h1 style="width: calc(100% - 20px); color: black; margin: 10px">
+          Emergencias
+        </h1>
+        <ul class="listaTareasRegiones">
+          <li
+            v-for="emergencia in emergencias"
+            :key="emergencia.id"
+            class="listaTareas"
+          >
+            <span>
+              <img
+                src="../../assets/images/sirena-encendida.svg"
+                alt="Sirena"
+              />
+            </span>
+            {{ emergencia.nombre }}
+          </li>
+        </ul>
+      </div>
       <div class="containerListTareasRegiones">
         <div v-if="!listTareas" class="containerTareasVacio">
           <h1>Tareas de la región</h1>

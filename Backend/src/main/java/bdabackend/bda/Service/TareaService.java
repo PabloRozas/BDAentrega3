@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 @Service
 public class TareaService {
+
     private static final Logger logger = LoggerFactory.getLogger(TareaService.class);
 
     @Autowired
@@ -36,8 +37,6 @@ public class TareaService {
     @Autowired
     private RankingRepository rankingRepository;
 
-
-
     // Guardar una nueva tarea o actualizar una existente
     public TareaEntity insertarTarea(String nombreTarea, String descripcionTarea, String tipoTarea, Point zona,
             Long emergencia, String requerimientos, int cantidadVoluntarios, LocalDate fecha, LocalDateTime hora) {
@@ -51,40 +50,33 @@ public class TareaService {
                 + "\", \"opciones\":[\"Aceptar\", \"Rechazar\"]}";
 
         // Enviar el mensaje a todos los usuarios conectados (a través de WebSocket)
-        myWebSocketHandler.enviarMensajeConOpcionesYProgramarBloqueo(mensajeOpciones, 120); // Aquí puedes ajustar el tiempo de
-                                                                                   // bloqueo si es necesario
+        myWebSocketHandler.enviarMensajeConOpcionesYProgramarBloqueo(mensajeOpciones, 120); // Aquí puedes ajustar el
+                                                                                            // tiempo de
+        // bloqueo si es necesario
 
         return tareaGuardada;
     }
 
-    //Ordenar rankingcandidatos a una tarea
+    // Ordenar rankingcandidatos a una tarea
     public List<RankingEntity> ordenarRankingCandidatos(String idTarea) {
         List<RankingEntity> rankings = rankingRepository.findByidTarea(idTarea);
         rankings.sort((ranking1, ranking2) -> ranking2.getNivel().compareTo(ranking1.getNivel()));
         return rankings;
     }
 
-    //obtener candidatos para una tarea
+    // obtener candidatos para una tarea
     public void obtenerCandidatos(int cantidadVoluntarios, String idTarea) {
         List<RankingEntity> rankings = ordenarRankingCandidatos(idTarea);
-        //crear lista vacía de rankings 
+        // crear lista vacía de rankings
         List<RankingEntity> rankingsCandidatos = new ArrayList<>();
 
-
-        //sacar los primeros x candidatos de rankings según cantidadVoluntarios de tarea:
-        for (int i=0; i<cantidadVoluntarios; i++){
+        // sacar los primeros x candidatos de rankings según cantidadVoluntarios de
+        // tarea:
+        for (int i = 0; i < cantidadVoluntarios; i++) {
             rankingsCandidatos.add(rankings.get(i));
         }
 
-
-        
     }
-
-
- 
-
-
-
 
     public TareaEntity buscarTareaPorId(String id) {
         logger.info("Buscando tarea con id: {}", id);
@@ -121,8 +113,9 @@ public class TareaService {
         return tareas;
     }
 
-    //llamar a getVoluntariosAceptados de webSocketHandler
+    // llamar a getVoluntariosAceptados de webSocketHandler
     public List<String> getVoluntariosCompletamenteAceptados() {
+        System.out.println("Llamando a getVoluntariosAceptados de WebSocketHandler");
         return myWebSocketHandler.getVoluntariosAceptados();
     }
 

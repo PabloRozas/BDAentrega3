@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import bdabackend.bda.Entity.EmergenciaEntity;
 import bdabackend.bda.Repository.EmergenciaRepository;
 
 @Service
@@ -31,7 +33,7 @@ public class EmergenciaService {
         return emergenciaRepository.buscarEmergenciaPorId(id);
     }
 
-    public List<?> listaEmergencia() {
+    public List<EmergenciaEntity> listaEmergencia() {
         return emergenciaRepository.listaEmergencia();
     }
 

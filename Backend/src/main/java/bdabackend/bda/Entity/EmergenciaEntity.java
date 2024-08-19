@@ -2,6 +2,9 @@ package bdabackend.bda.Entity;
 
 import org.springframework.data.geo.Point;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -34,6 +37,8 @@ public class EmergenciaEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_institucion")
+    @JsonBackReference
+    @JsonIgnore
     private InstitucionEntity institucion;
 
     // Constructores
