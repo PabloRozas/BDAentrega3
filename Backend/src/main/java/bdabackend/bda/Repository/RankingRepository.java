@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 import bdabackend.bda.Entity.RankingEntity;
+import java.util.Optional;
 
 @Repository
 public interface RankingRepository extends MongoRepository<RankingEntity, String> {
@@ -38,5 +39,21 @@ public interface RankingRepository extends MongoRepository<RankingEntity, String
          */
         @Query(value = "{'id': ?0}", delete = true)
         void deleteByid(String id);
+
+        // FindByIdTarea
+
+        /**
+         * Obtiene el ranking de una tarea
+         * 
+         * @param idTarea id de la tarea
+         * @return ranking de la tarea
+         */
+
+          List<RankingEntity> findByidTarea(String idTarea);
+
+        // FindByIdVoluntario y idTarea
+        Optional<RankingEntity> findByIdVoluntarioAndIdTarea(String idVoluntario, String idTarea);
+
+
 
 }

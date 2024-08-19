@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("/ranking")
 public class RankingController {
+    
     @Autowired
     private RankingService rankingService;
     // @Autowired
@@ -119,4 +121,25 @@ public class RankingController {
         rankingService.eliminarRankingPorId(idRanking);
 
     }
+
+    @GetMapping("/tarea/{idTarea}")
+    public List<RankingEntity> findByidTarea(@PathVariable String idTarea) {
+        //mensaje por consola:
+        System.out.println("idTarea: " + idTarea);
+
+        return rankingService.obtenerRankingTarea(idTarea);
+    }
+
+    @GetMapping("/tarea/{idTarea}/ordenado")
+    public List<RankingEntity> findByidTareaOrdenado(@PathVariable String idTarea) {
+        return rankingService.ordenarRankingTarea(idTarea);
+    }
+
+    @PutMapping("/aceptarTarea/{idVoluntario}/{idTarea}")
+    public void aceptarTarea(@PathVariable String idVoluntario, @PathVariable String idTarea) {
+        rankingService.aceptarTarea(idVoluntario, idTarea);
+    }
+
+    
+    
 }
