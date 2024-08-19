@@ -43,6 +43,7 @@ export default {
         { id: 29, nombre: "Ola de viento" },
         { id: 30, nombre: "Ola de nieve" },
       ],
+      voluntarios: [],
     };
   },
   mounted() {
@@ -209,6 +210,22 @@ export default {
         marker.setMap(null);
       });
       this.markers = [];
+    },
+    async getEmergencias() {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/emergencia/all",
+          {
+            headers: {
+              Authorization: `Bearer ${this.auth.token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        this.emergencias = response.data;
+      } catch (error) {
+        console.error(error);
+      }
     },
   },
 };

@@ -33,7 +33,7 @@ public class EmergenciaService {
         return emergenciaRepository.buscarEmergenciaPorId(id);
     }
 
-    public List<EmergenciaEntity> listaEmergencia() {
+    public List<?> listaEmergencia() {
         return emergenciaRepository.listaEmergencia();
     }
 
