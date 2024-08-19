@@ -16,7 +16,29 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class RankingService {
+public class RankingService implements VoluntarioAceptadoObserver {
+
+    @Override
+    public void onVoluntarioAceptado(String idVoluntario) {
+        System.out.println("Voluntario aceptado con ID: " + idVoluntario);
+        System.out.println("ESTAMOS EN RANKINGSERVICE CON LO DEL OBSERVER")
+
+         Optional<RankingEntity> rankingOpt = rankingRepository.findByIdVoluntarioAndIdTarea(idTarea, idVoluntario);
+
+        if (rankingOpt.isPresent()) {
+            RankingEntity ranking = rankingOpt.get();
+            ranking.setTareaAceptada(true);
+            rankingRepository.save(ranking); // Guardar el cambio en la base de datos
+            System.out.println(
+                    "Tarea asignada actualizada a true para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
+        } else {
+            System.out
+                    .println("No se encontró el ranking para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
+        }
+
+        // Aquí puedes agregar la lógica que debería ocurrir cuando un voluntario acepta
+    }
+
     @Autowired
     private RankingRepository rankingRepository;
 
@@ -53,7 +75,7 @@ public class RankingService {
             String numeroDocumentoVoluntario, String idTarea, String idVoluntario) {
 
         RankingEntity ranking = new RankingEntity(nivel, tareaRanking, nombreVoluntario, numeroDocumentoVoluntario,
-                idTarea, idVoluntario, false );
+                idTarea, idVoluntario, false);
         rankingRepository.insert(ranking);
     }
 
@@ -76,16 +98,15 @@ public class RankingService {
         // Se busca la emergenciahabilidad
         List<EmergenciaHabilidadEntity> emergenciaHabilidades = emergenciaHabilidadSevice.listaEmergenciaHabilidad();
 
-
         // Se bucan todos los rankings
         List<RankingEntity> rankings = listaRanking();
         // Total de rankings
         /*
-        int totalRankings = rankings.size();
-
-        if (totalRankings == 0){
-            totalRankings = 1;
-        }
+         * int totalRankings = rankings.size();
+         * 
+         * if (totalRankings == 0){
+         * totalRankings = 1;
+         * }
          */
 
         // Si no hay tareas, no se crea el ranking
@@ -131,16 +152,16 @@ public class RankingService {
             puntaje_2 *= 0.1;
 
             String id = voluntario.getId();
-            for (VoluntarioHabilidadEntity voluntarioHabilidad : voluntarioHabilidades){
+            for (VoluntarioHabilidadEntity voluntarioHabilidad : voluntarioHabilidades) {
                 String idvoluntario = voluntarioHabilidad.getVoluntario();
-                if (Objects.equals(id, idvoluntario)){
+                if (Objects.equals(id, idvoluntario)) {
                     Long idhabilidad = voluntarioHabilidad.getHabilidad().getId();
-                    for (EmergenciaHabilidadEntity emergenciaHabilidad : emergenciaHabilidades){
+                    for (EmergenciaHabilidadEntity emergenciaHabilidad : emergenciaHabilidades) {
                         Long idhabilidadcomparar = emergenciaHabilidad.getHabilidad().getId();
-                        if (Objects.equals(idhabilidad, idhabilidadcomparar)){
+                        if (Objects.equals(idhabilidad, idhabilidadcomparar)) {
                             Long idemergencia = emergenciaHabilidad.getEmergencia().getId();
                             Long idemergenciacompara = tarea.getEmergencia();
-                            if (Objects.equals(idemergencia, idemergenciacompara)){
+                            if (Objects.equals(idemergencia, idemergenciacompara)) {
                                 puntaje_3 += 1;
                                 break;
                             }
@@ -152,7 +173,7 @@ public class RankingService {
             puntaje_3 *= 0.3;
 
             // Se calcula el nivel del voluntario
-            Double nivel = (puntaje + puntaje_2 + puntaje_3) ;
+            Double nivel = (puntaje + puntaje_2 + puntaje_3);
 
             // Se crea el ranking
             insertarRanking(nivel, tarea.getNombre(), voluntario.getNombre(), voluntario.getNumeroDocumento(),
@@ -182,10 +203,10 @@ public class RankingService {
         List<RankingEntity> rankings = listaRanking();
         // Total de rankings
         /*
-        int totalRankings = rankings.size();
-        if (totalRankings == 0){
-            totalRankings = 1;
-        }
+         * int totalRankings = rankings.size();
+         * if (totalRankings == 0){
+         * totalRankings = 1;
+         * }
          */
 
         // Si no hay voluntarios, no se crea el ranking
@@ -231,16 +252,16 @@ public class RankingService {
             puntaje_2 *= 0.1;
 
             String id = voluntario.getId();
-            for (VoluntarioHabilidadEntity voluntarioHabilidad : voluntarioHabilidades){
+            for (VoluntarioHabilidadEntity voluntarioHabilidad : voluntarioHabilidades) {
                 String idvoluntario = voluntarioHabilidad.getVoluntario();
-                if (Objects.equals(id, idvoluntario)){
+                if (Objects.equals(id, idvoluntario)) {
                     Long idhabilidad = voluntarioHabilidad.getHabilidad().getId();
-                    for (EmergenciaHabilidadEntity emergenciaHabilidad : emergenciaHabilidades){
+                    for (EmergenciaHabilidadEntity emergenciaHabilidad : emergenciaHabilidades) {
                         Long idhabilidadcomparar = emergenciaHabilidad.getHabilidad().getId();
-                        if (Objects.equals(idhabilidad, idhabilidadcomparar)){
+                        if (Objects.equals(idhabilidad, idhabilidadcomparar)) {
                             Long idemergencia = emergenciaHabilidad.getEmergencia().getId();
                             Long idemergenciacompara = tarea.getEmergencia();
-                            if (Objects.equals(idemergencia, idemergenciacompara)){
+                            if (Objects.equals(idemergencia, idemergenciacompara)) {
                                 puntaje_3 += 1;
                                 break;
                             }
@@ -260,7 +281,6 @@ public class RankingService {
         }
     }
 
-
     public void modificarRankingVoluntario(String idVoluntario) {
 
         // Se buscan todas las tareas
@@ -275,16 +295,15 @@ public class RankingService {
         // Se busca la emergenciahabilidad
         List<EmergenciaHabilidadEntity> emergenciaHabilidades = emergenciaHabilidadSevice.listaEmergenciaHabilidad();
 
-
         // Se bucan todos los rankings
         List<RankingEntity> rankings = listaRanking();
         // Total de rankings
         /*
-        int totalRankings = rankings.size();
-
-        if (totalRankings == 0){
-            totalRankings = 1;
-        }
+         * int totalRankings = rankings.size();
+         * 
+         * if (totalRankings == 0){
+         * totalRankings = 1;
+         * }
          */
 
         // Si no hay tareas, no se crea el ranking
@@ -332,16 +351,16 @@ public class RankingService {
             puntaje_2 *= 0.1;
 
             String id = voluntario.getId();
-            for (VoluntarioHabilidadEntity voluntarioHabilidad : voluntarioHabilidades){
+            for (VoluntarioHabilidadEntity voluntarioHabilidad : voluntarioHabilidades) {
                 String idvoluntario = voluntarioHabilidad.getVoluntario();
-                if (Objects.equals(id, idvoluntario)){
+                if (Objects.equals(id, idvoluntario)) {
                     Long idhabilidad = voluntarioHabilidad.getHabilidad().getId();
-                    for (EmergenciaHabilidadEntity emergenciaHabilidad : emergenciaHabilidades){
+                    for (EmergenciaHabilidadEntity emergenciaHabilidad : emergenciaHabilidades) {
                         Long idhabilidadcomparar = emergenciaHabilidad.getHabilidad().getId();
-                        if (Objects.equals(idhabilidad, idhabilidadcomparar)){
+                        if (Objects.equals(idhabilidad, idhabilidadcomparar)) {
                             Long idemergencia = emergenciaHabilidad.getEmergencia().getId();
                             Long idemergenciacompara = tarea.getEmergencia();
-                            if (Objects.equals(idemergencia, idemergenciacompara)){
+                            if (Objects.equals(idemergencia, idemergenciacompara)) {
                                 puntaje_3 += 1;
                                 break;
                             }
@@ -353,13 +372,13 @@ public class RankingService {
             puntaje_3 *= 0.3;
 
             // Se calcula el nivel del voluntario
-            Double nivel = (puntaje + puntaje_2 + puntaje_3) ;
+            Double nivel = (puntaje + puntaje_2 + puntaje_3);
 
             String idtarea = tarea.getId();
-            for (RankingEntity ranking : rankings){
+            for (RankingEntity ranking : rankings) {
                 String idvoluntariocomprar = ranking.getVoluntario();
                 String idtareacomparar = ranking.getTarea();
-                if (Objects.equals(idvoluntariocomprar, idVoluntario) && Objects.equals(idtareacomparar, idtarea)){
+                if (Objects.equals(idvoluntariocomprar, idVoluntario) && Objects.equals(idtareacomparar, idtarea)) {
                     ranking.setNivel(nivel);
 
                     // Guardar los cambios
@@ -381,7 +400,7 @@ public class RankingService {
         return rankingRepository.findAll();
     }
 
-    //lista con todos 
+    // lista con todos
 
     /**
      * Busca un ranking en la base de datos por su id.
@@ -492,11 +511,10 @@ public class RankingService {
     // return contador;
     // }
 
-    //Obtiene los rankings de una tarea 
+    // Obtiene los rankings de una tarea
     public List<RankingEntity> obtenerRankingTarea(String idTarea) {
 
-    
-        //crear lista de rankings vacía
+        // crear lista de rankings vacía
         List<RankingEntity> rankings = new ArrayList<RankingEntity>();
 
         System.out.println("lista de rankings vacía");
@@ -505,7 +523,7 @@ public class RankingService {
 
         System.out.println("lista de rankings original" + rankingsOriginal);
 
-        //buscar en rankingsOriginal los que tengan idTarea igual a objectId
+        // buscar en rankingsOriginal los que tengan idTarea igual a objectId
         for (RankingEntity ranking : rankingsOriginal) {
             if (ranking.getTarea().equals(idTarea)) {
                 rankings.add(ranking);
@@ -515,15 +533,15 @@ public class RankingService {
         return rankings;
     }
 
-    //Ordena los rankings de una tarea en específico según nivel, de mayor a menor
-    
-    public  List<RankingEntity> ordenarRankingTarea(String idTarea) {
+    // Ordena los rankings de una tarea en específico según nivel, de mayor a menor
+
+    public List<RankingEntity> ordenarRankingTarea(String idTarea) {
         List<RankingEntity> rankings = rankingRepository.findByidTarea(idTarea);
         rankings.sort((ranking1, ranking2) -> ranking2.getNivel().compareTo(ranking1.getNivel()));
         return rankings;
     }
 
-    //Aceptar tarea
+    // Aceptar tarea
     public void aceptarTarea(String idVoluntario, String idTarea) {
         List<RankingEntity> rankings = rankingRepository.findAll();
         for (RankingEntity ranking : rankings) {
@@ -534,27 +552,29 @@ public class RankingService {
         }
     }
 
-    // 
+    //
     public List<RankingEntity> obtenerCandidatos(String idTarea) {
         List<RankingEntity> rankings = ordenarRankingTarea(idTarea);
-        //crear lista vacía de rankings 
+        // crear lista vacía de rankings
         List<RankingEntity> rankingsCandidatos = new ArrayList<>();
 
-        //crear la tarea instancia
+        // crear la tarea instancia
         TareaEntity tarea = tareaService.buscarTareaPorId(idTarea);
-
 
         int cantDeVoluntarios = tarea.getCantidadVoluntarios();
 
-        for (int i=0; i<cantDeVoluntarios; i++){
+        for (int i = 0; i < cantDeVoluntarios; i++) {
+            if (i >= rankings.size()) {
+                break;
+            }
             rankingsCandidatos.add(rankings.get(i));
         }
 
         return rankingsCandidatos;
     }
 
-    //obtener id de voluntario de los rankings
-    //devuelve la lista de los id de voluntarios
+    // obtener id de voluntario de los rankings
+    // devuelve la lista de los id de voluntarios
     public List<String> obtenerIdVoluntarios(List<RankingEntity> rankings) {
         List<String> idVoluntarios = new ArrayList<>();
         for (RankingEntity ranking : rankings) {
@@ -563,34 +583,38 @@ public class RankingService {
         return idVoluntarios;
     }
 
-    //enviar mensaje a los usuarios permitidos y programar bloqueo
+    // enviar mensaje a los usuarios permitidos y programar bloqueo
     public void mensajeTareaCreada(List<String> idVoluntarios, String nombreTarea) {
-        //enviar mensaje
-            // Crear el mensaje a enviar a los usuarios conectados
+        // enviar mensaje
+        // Crear el mensaje a enviar a los usuarios conectados
         String mensajeOpciones = "{\"tipo\":\"notificacion\", \"mensaje\":\"Selecciona una opción para:  " + nombreTarea
-        + "\", \"opciones\":[\"Aceptar\", \"Rechazar\"]}";
+                + "\", \"opciones\":[\"Aceptar\", \"Rechazar\"]}";
 
-        myWebSocketHandler.enviarMensajeConOpcionesAUsuariosPermitidos(mensajeOpciones,idVoluntarios, 120); // Aquí puedes ajustar el tiempo de
-                                                                                   // bloqueo si es necesario
+        myWebSocketHandler.enviarMensajeConOpcionesAUsuariosPermitidos(mensajeOpciones, idVoluntarios, 120); // Aquí
+                                                                                                             // puedes
+                                                                                                             // ajustar
+                                                                                                             // el
+                                                                                                             // tiempo
+                                                                                                             // de
+        // bloqueo si es necesario
 
     }
 
     public void actualizarTareaAsignada(String idTarea, String idVoluntario) {
         // Buscar el registro en el ranking donde idTarea e idVoluntario coincidan
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
         Optional<RankingEntity> rankingOpt = rankingRepository.findByIdVoluntarioAndIdTarea(idTarea, idVoluntario);
-    
+
         if (rankingOpt.isPresent()) {
             RankingEntity ranking = rankingOpt.get();
             ranking.setTareaAceptada(true);
             rankingRepository.save(ranking); // Guardar el cambio en la base de datos
-            System.out.println("Tarea asignada actualizada a true para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
+            System.out.println(
+                    "Tarea asignada actualizada a true para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
         } else {
-            System.out.println("No se encontró el ranking para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
+            System.out
+                    .println("No se encontró el ranking para idTarea: " + idTarea + " y idVoluntario: " + idVoluntario);
         }
     }
-
-
-  
-
 
 }

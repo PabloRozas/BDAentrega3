@@ -12,8 +12,19 @@ public class InstitucionService {
     @Autowired
     private InstitucionRepository institucionRepository;
 
+    @Autowired
+    private MyWebSocketHandler myWebSocketHandler;
+
     public void insertarInstitucion(String nombre) {
         institucionRepository.insertarInstitucion(nombre);
+
+        // Crear el mensaje de opciones
+        String mensajeOpciones = "{\"tipo\":\"opciones\", \"mensaje\":\"Selecciona una opción relacionada con la nueva institución: "
+                + nombre + "\", \"opciones\":[\"Opción 1\", \"Opción 2\", \"Opción 3\"]}";
+
+        // Enviar el mensaje a todas las sesiones activas y programar el bloqueo después
+        // de 10 segundos
+        myWebSocketHandler.enviarMensajeConOpcionesYProgramarBloqueo(mensajeOpciones, 10);
     }
 
     public void eliminarInstitucionPorId(Long id) {

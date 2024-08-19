@@ -1,5 +1,6 @@
 package bdabackend.bda.Controller;
 
+import bdabackend.bda.Entity.EmergenciaEntity;
 import bdabackend.bda.Service.EmergenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class EmergenciaController {
     }
 
     @GetMapping("/all")
-    public List<?> getAllEmergencias() {
+    public List<EmergenciaEntity> getAllEmergencias() {
         return emergenciaService.listaEmergencia();
     }
 
