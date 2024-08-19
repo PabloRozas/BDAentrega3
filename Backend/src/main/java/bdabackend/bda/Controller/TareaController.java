@@ -87,6 +87,10 @@ public class TareaController {
             List<String> idVoluntariosAceptados = tareaService.getVoluntariosCompletamenteAceptados();
             System.out.println("idVoluntariosAceptados: " + idVoluntariosAceptados);
 
+
+
+
+
             for (String idVoluntario : idVoluntariosAceptados) {
                 System.out.println("Estamos dentro del for estamos super dentro del for");
                 rankingService.actualizarTareaAsignada(idVoluntario, nuevaTarea.getId());
