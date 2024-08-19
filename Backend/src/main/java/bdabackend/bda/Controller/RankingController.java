@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 
+
 @RestController
 @RequestMapping("/ranking")
 public class RankingController {
@@ -139,6 +140,12 @@ public class RankingController {
     public void aceptarTarea(@PathVariable String idVoluntario, @PathVariable String idTarea) {
         rankingService.aceptarTarea(idVoluntario, idTarea);
     }
+
+    @GetMapping("voluntariosAceptados/{idTarea}")// obtenerRankingVoluntariosPorTarea
+    public List<RankingEntity> getVoluntariosAceptados(@PathVariable String idTarea) {
+        return rankingService.obtenerRankingVoluntariosPorTarea(idTarea);
+    }
+    
 
     
     

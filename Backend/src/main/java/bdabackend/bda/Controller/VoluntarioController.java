@@ -27,6 +27,8 @@ public class VoluntarioController {
     @Autowired
     private RankingService rankingService;
 
+    
+
     @Autowired
     private AuthService authService;
 
@@ -147,5 +149,7 @@ public class VoluntarioController {
         List<VoluntarioEntity> voluntarios = voluntarioService.getVoluntariosByTarea(tareaId);
         return ResponseEntity.ok(voluntarios);
     }
+
+    
 
 }

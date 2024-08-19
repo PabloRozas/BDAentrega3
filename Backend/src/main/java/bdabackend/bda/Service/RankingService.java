@@ -612,4 +612,20 @@ public class RankingService {
         }
     }
 
+
+    //tomar lo de getVoluntariosByTarea de voluntarioservice y extraer el id de voluntario, buscarlo en los rankings y ordenar por nivel
+    public List<RankingEntity> obtenerRankingVoluntariosPorTarea(String idTarea) {
+        List<VoluntarioEntity> idVoluntarios = voluntarioService.getVoluntariosByTarea(idTarea);
+        List<RankingEntity> rankings = new ArrayList<>();
+        for (VoluntarioEntity idVoluntario : idVoluntarios) {
+            String id = idVoluntario.getId();
+            Optional<RankingEntity> rankingOpt = rankingRepository.findByIdVoluntarioAndIdTarea(id, idTarea);
+            if (rankingOpt.isPresent()) {
+                rankings.add(rankingOpt.get());
+            }
+        }
+        rankings.sort((ranking1, ranking2) -> ranking2.getNivel().compareTo(ranking1.getNivel()));
+        return rankings;
+    }
+
 }
