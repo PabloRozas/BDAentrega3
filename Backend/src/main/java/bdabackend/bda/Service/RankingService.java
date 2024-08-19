@@ -42,8 +42,11 @@ public class RankingService {
     private MyWebSocketHandler myWebSocketHandler;
 
     @EventListener
-    public void onVoluntarioAceptado(VoluntarioAceptadoEvent  event, String idTarea) {
+    public void onVoluntarioAceptado(VoluntarioAceptadoEvent  event) {
         String idVoluntario = event.getIdVoluntario();
+        String idTarea = event.getIdTarea();
+        System.out.println("Evento recibido para voluntario aceptado: " + idVoluntario + " para la tarea: " + idTarea);
+
          // Actualizar la tarea asignada
          actualizarTareaAsignada(idVoluntario, idTarea);
         
@@ -592,10 +595,10 @@ public class RankingService {
 
     }
 
-    public void actualizarTareaAsignada(String idTarea, String idVoluntario) {
+    public void actualizarTareaAsignada( String idVoluntario, String idTarea) {
         // Buscar el registro en el ranking donde idTarea e idVoluntario coincidan
         System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
-        Optional<RankingEntity> rankingOpt = rankingRepository.findByIdVoluntarioAndIdTarea(idTarea, idVoluntario);
+        Optional<RankingEntity> rankingOpt = rankingRepository.findByIdVoluntarioAndIdTarea(idVoluntario, idTarea );
 
         if (rankingOpt.isPresent()) {
             RankingEntity ranking = rankingOpt.get();
