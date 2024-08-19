@@ -1,8 +1,5 @@
 <template>
-	<NuxtLayout>
-		<Cursor />
-		<NuxtPage />
-	</NuxtLayout>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
-
-<style></style>

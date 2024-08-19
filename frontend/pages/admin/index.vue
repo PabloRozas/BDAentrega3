@@ -2,13 +2,13 @@
 import axios from "axios";
 import anime from "animejs";
 import { useAuthStore } from "../../stores/useAuthStore";
+
 export default {
   data() {
     return {
       map: null,
       tareas: [],
       markers: [],
-      menuEmergencias: false,
       opcionMenuNav: 0,
       listTareas: false,
     };
@@ -16,11 +16,27 @@ export default {
   mounted() {
     this.auth = useAuthStore();
     this.initMap();
+    this.getInstituciones();
   },
   methods: {
-    toggleEmergencias() {
-      this.menuEmergencias = !this.menuEmergencias;
+    async getInstituciones() {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/institucion/all`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.auth.token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        this.instituciones = response.data;
+        console.log(this.instituciones);
+      } catch (error) {
+        console.error(error);
+      }
     },
+
     initMap() {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDd1yMKvX4PyaxaVtyauISsGrMvxYi6CgQ&libraries=places`;
@@ -46,7 +62,7 @@ export default {
         axios
           .get(
             "http://localhost:8080/regiones/all",
-            // TODO: cambiar el token por el que se obtenga en el login que debe estar guardado en el local storage
+            // TODO: cambiar el token por el que se obtenga en el login que debe estar guardado en el session storage
             {
               headers: {
                 Authorization: `Bearer ${this.auth.token}`,
@@ -191,37 +207,6 @@ export default {
       <div id="map" style="height: 100%; width: 100%"></div>
     </section>
     <section class="section2">
-      <div class="botonEmeregenciaOff" :class="{ active: menuEmergencias }">
-        <div
-          v-if="!menuEmergencias"
-          @click="toggleEmergencias"
-          style="
-            height: 60px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          "
-        >
-          Crear Emergencia
-        </div>
-        <div v-if="menuEmergencias" class="superiorForm">
-          <button class="emergenciaBack" @click="toggleEmergencias">
-            Salir
-          </button>
-          <h1>Crear Emergencia</h1>
-        </div>
-        <div v-if="menuEmergencias" class="containerFormEmergencia">
-          <form class="formaEmergencias">
-            <input type="text" placeholder="Tipo de Emergencia" />
-            <input type="text" placeholder="Condición Fisica" />
-            <input type="number" placeholder="Cantidad de voluntarios" />
-            <input type="text" placeholder="Institución" />
-            <input type="text" placeholder="Ubicación" />
-            <button class="botonEnviarEmergencia">Crear Emergencia</button>
-          </form>
-        </div>
-      </div>
       <!-- TODO: en la segunda fila debe ir la leyenda del mapa con los puntos y su significado, debe cambiar a la lista de las emergencias cuando se seleccione en el mapa -->
       <!-- lista de las tareas -->
       <div class="containerListTareasRegiones">
@@ -229,7 +214,7 @@ export default {
           <h1>Tareas de la región</h1>
           <p>Seleccione una región para ver las tareas</p>
         </div>
-        <ul v-if="listTareas">
+        <ul v-if="listTareas && tareas.length > 0" class="listaTareasRegiones">
           <li v-for="tarea in tareas" :key="tarea.id" class="listaTareas">
             <span>
               <img src="../../assets/images/marcador.svg" alt="Marcador" />
@@ -237,6 +222,12 @@ export default {
             {{ tarea.nombre }}
           </li>
         </ul>
+        <div
+          v-if="listTareas && tareas.length === 0"
+          class="containerTareasVacio"
+        >
+          <h1>No hay tareas en esta región</h1>
+        </div>
       </div>
     </section>
   </div>
@@ -256,5 +247,17 @@ export default {
   align-items: center;
   height: 100%;
   color: black;
+}
+
+.selectInstituciones {
+  width: 100%;
+  padding: 5px;
+  margin: 5px 0;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.selectInstituciones option {
+  padding: 5px;
 }
 </style>
