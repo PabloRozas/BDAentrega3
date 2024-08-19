@@ -42,6 +42,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 
+
+
 @Service
 public class MyWebSocketHandler extends TextWebSocketHandler {
 
@@ -144,10 +146,13 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                     System.out.println("Voluntario " + voluntario);
                     if (voluntario != null) {
                         voluntariosAceptados.add(voluntario.getId());
+                        /* // Publicar el evento de voluntario aceptado
+                        VoluntarioAceptadoEvent event = new VoluntarioAceptadoEvent(this, voluntario.getId(), "idTarea");
+                        eventPublisher.publishEvent(event); */
 
-                        // Publicar el evento cuando un voluntario acepte
-                        VoluntarioAceptadoEvent event = new VoluntarioAceptadoEvent(this, idVoluntario);
-                        eventPublisher.publishEvent(event);
+                        
+
+
                     }
                     System.out.println("Voluntarios aceptados: " + voluntariosAceptados);
                     System.out.println("Voluntario " + voluntario.getId() + " ha aceptado la tarea.");
@@ -168,7 +173,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     // Método para obtener la lista de voluntarios que aceptaron
     public List<String> getVoluntariosAceptados() {
         System.out.println("Voluntarios aceptados 1: " + voluntariosAceptados);
-        return new ArrayList<>(voluntariosAceptados); // Retornar una copia de la lista
+        
+        return voluntariosAceptados; // Retornar una copia de la lista
     }
 
     // Método para obtener el identificador de usuario desde la sesión

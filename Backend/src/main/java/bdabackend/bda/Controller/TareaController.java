@@ -2,16 +2,20 @@ package bdabackend.bda.Controller;
 
 import bdabackend.bda.Entity.RankingEntity;
 import bdabackend.bda.Entity.TareaEntity;
+import bdabackend.bda.Events.VoluntarioAceptadoEvent;
 import bdabackend.bda.Service.RankingService;
 import bdabackend.bda.Service.TareaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.aggregation.DocumentOperators.Rank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +35,23 @@ public class TareaController {
 
     @Autowired
     private TareaService tareaService;
+
+    public final ApplicationEventPublisher applicationEventPublisher;
+
+    public TareaController(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    @Autowired
+    public TareaController(TareaService mongoTareaService, 
+                           RankingService rankingService, 
+                           TareaService tareaService, 
+                           ApplicationEventPublisher eventPublisher) {
+        this.mongoTareaService = mongoTareaService;
+        this.rankingService = rankingService;
+        this.tareaService = tareaService;
+        this.applicationEventPublisher = eventPublisher;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<TareaEntity> getTareaById(@PathVariable String id) {
@@ -81,20 +102,30 @@ public class TareaController {
             System.out.println("ahashdasjhdkajsgdjkhasgdk");
 
             rankingService.mensajeTareaCreada(idVoluntarios, nuevaTarea.getNombre());
-            // llamar a un metodo de tareaService que obtenga los voluntarios aceptados
+            
             System.out.println("idVoluntarios: " + idVoluntarios);
 
+            // llamar a un metodo de tareaService que obtenga los voluntarios aceptados
             List<String> idVoluntariosAceptados = tareaService.getVoluntariosCompletamenteAceptados();
             System.out.println("idVoluntariosAceptados: " + idVoluntariosAceptados);
+            try {
+                // Esperar 5 segundos (5000 milisegundos)
+                Thread.sleep(8000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-
-
-
+          
 
             for (String idVoluntario : idVoluntariosAceptados) {
-                System.out.println("Estamos dentro del for estamos super dentro del for");
-                rankingService.actualizarTareaAsignada(idVoluntario, nuevaTarea.getId());
+                 // Publicar el evento con el idVoluntario y idTarea
+                VoluntarioAceptadoEvent event = new VoluntarioAceptadoEvent(this, idVoluntario, nuevaTarea.getId());
+                System.out.println("event: " + event);
+                System.out.println("AQUÍ SE SUPONE QUE SE DISPARÓ EL EVENTO: " );
+                logger.info("Publicando evento para el voluntario: " + idVoluntario + " y tarea: " + nuevaTarea.getId());
+                applicationEventPublisher.publishEvent(event);
             }
+
 
             return ResponseEntity.ok(nuevaTarea);
         } catch (Exception e) {
